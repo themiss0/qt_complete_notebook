@@ -19,7 +19,9 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr); // 主窗口构造函数
     ~MainWindow();  // 析构函数
-    void sumbitStyleSheet(); // 应用样式表更改 
+    void sumbitStyleSheet(); // 应用样式表更改
+
+
 
 private slots:
     // 菜单栏动作槽函数
@@ -63,12 +65,12 @@ private:
     QLabel statusLabel;           // 状态栏标签(显示文本信息)
     QLabel statusCursorLabel;     // 状态栏标签(显示光标位置) 
     QLabel autherLabel;           // 状态栏标签(显示作者信息)
-    QString filepath;             // 当前文件路径
     QString textEditFontColor;    // 字体颜色
     QString textEditBgColor;      // 背景颜色 
     bool ischanged;              // 文件是否被修改
     void saveToFile(const QString &filename); // 保存文件
     bool openFile(const QString &filePath); // 打开文件
     FavDialog *favDialog;         // 收藏夹窗口
+    QString filepath;             // 当前文件路径
 };
 #endif // MAINWINDOW_H

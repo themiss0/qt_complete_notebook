@@ -4,8 +4,8 @@
 #include <QDialogButtonBox>
 #include <QMessageBox>
 
-FavDialog::FavDialog(QWidget *parent)
-    : QDialog(parent), ui(new Ui::FavDialog)
+FavDialog::FavDialog(QWidget *parent, const QString &path)
+    : QDialog(parent), ui(new Ui::FavDialog), filepath(path)
 {
     ui->setupUi(this);
 }
@@ -27,7 +27,7 @@ void FavDialog::showEvent(QShowEvent *event)
 //  打开文件
 void FavDialog::on_bt_open_clicked()
 {
-    if (ui->listWidget->count() <= 0)
+    if (ui->listWidget->selectedItems().isEmpty())
     {
         return;
     }
@@ -39,7 +39,7 @@ void FavDialog::on_bt_open_clicked()
 //  删除文件
 void FavDialog::on_bt_delete_clicked()
 {
-    if (ui->listWidget->count() <= 0)
+    if (ui->listWidget->selectedItems().isEmpty())
     {
         return;
     }
@@ -48,8 +48,8 @@ void FavDialog::on_bt_delete_clicked()
             this,
             "Delete",
             "确定要删除此收藏吗?",
-            QMessageBox::Yes | QMessageBox::No
-            ) == QMessageBox::No) {
+            QMessageBox::Yes | QMessageBox::No) == QMessageBox::No)
+    {
         return;
     }
 
@@ -65,4 +65,16 @@ void FavDialog::on_bt_delete_clicked()
 void FavDialog::on_bt_close_clicked()
 {
     this->close();
+}
+// 添加收藏
+void FavDialog::on_bt_add_clicked()
+{
+
+    if (filepath.isEmpty() || filepath == "")
+    {
+        return;
+    }
+    qDebug() << "not null " + filepath;
+    IDataBase::getInstance().addFavoriteFilePath(filepath);
+    this->showEvent(nullptr);
 }

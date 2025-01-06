@@ -9,7 +9,6 @@ IDataBase::IDataBase(QObject *parent)
     initDataBase();
 }
 
-
 // 获取最近打开文件的路径列表
 QStringList IDataBase::getLastOpenFilePaths()
 {
@@ -78,18 +77,20 @@ bool IDataBase::deleteAllLastOpenFilePaths()
     return true;
 }
 
-
 // 添加收藏文件路径
 bool IDataBase::addFavoriteFilePath(const QString &filePath)
 {
-    QSqlQuery query("INSERT INTO favPath ( path) VALUES (:path)");
+    QSqlQuery query;
+
+    // 插入新路径
+    query.prepare("INSERT INTO favPath (path) VALUES (:path)");
     query.bindValue(":path", filePath);
+
     if (!query.exec())
     {
         qDebug() << "Insert query execution failed:" << query.lastError().text();
         return false;
     }
-    return true;
 }
 // 删除收藏文件路径
 bool IDataBase::deleteFavoriteFilePath(const QString &filePath)
@@ -120,7 +121,6 @@ QStringList IDataBase::getFavoriteFilePaths()
     }
     return filePaths;
 }
-
 
 // 初始化数据库连接
 void IDataBase::initDataBase()

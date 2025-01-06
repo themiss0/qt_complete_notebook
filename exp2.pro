@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,14 +14,16 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     replacedialog.cpp \
-    searchdialog.cpp
+    searchdialog.cpp  \
+    idatabase.cpp
 
 HEADERS += \
     aboutdialog.h \
     codeeditor.h \
     mainwindow.h \
     replacedialog.h \
-    searchdialog.h
+    searchdialog.h  \
+    idatabase.h
 
 FORMS += \
     aboutdialog.ui \

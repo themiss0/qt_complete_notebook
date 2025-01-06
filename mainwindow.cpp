@@ -10,6 +10,7 @@
 #include <iostream>
 #include <QPlainTextEdit>
 #include <QFontDialog>
+#include "idatabase.h"
 
 // 主窗口构造函数:初始化UI和各项设置
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -53,13 +54,69 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ischanged = false; // 初始化文档修改状态
 }
-
+// 析构函数
 MainWindow::~MainWindow()
 {
-
     delete ui;
 }
 
+// 提取的功能函数
+
+// 保存文件
+void MainWindow::saveToFile(const QString &filename)
+{
+    QFile file(filename);
+
+    if (!file.open(QFile::WriteOnly | QFile::Text))
+    {
+        return;
+    }
+
+    QTextStream out(&file);
+    QString text = ui->TextEdit->toPlainText();
+
+    out << text;
+    file.flush();
+    file.close();
+
+    filepath = filename;
+    ischanged = false;
+    this->setWindowTitle(filepath);
+}
+// 打开文件
+bool MainWindow::openFile(const QString &pathName)
+{
+    QFile file(pathName);
+
+    if (!file.open(QFile::ReadOnly | QFile::Text))
+    {
+        return false;
+    }
+    // 添加最近打开文件路径到数据库
+    try
+    {
+        IDataBase::getInstance().addLastOpenFilePath(pathName);
+    }
+    catch (QException *e)
+    {
+        qDebug() << e->what();
+    }
+    // 读取文件内容
+    QTextStream in(&file);
+    QString text = in.readAll();
+    ui->TextEdit->clear();
+    ui->TextEdit->insertPlainText(text);
+    file.close();
+    // 更新窗口标题
+    this->setWindowTitle(QFileInfo(pathName).absoluteFilePath());
+    // 更新文件路径
+    filepath = pathName;
+    // 重置更改状态
+    ischanged = false;
+    return true;
+}
+
+// 槽函数
 
 // 关于对话框的槽函数
 void MainWindow::on_actionAbout_triggered()
@@ -82,12 +139,7 @@ void MainWindow::on_actionReplace_triggered()
 
 // 文件操作相关函数
 
-/**
- * 新建文件操作处理
- * 1. 检查当前文档是否已修改
- * 2. 如已修改则提示保存
- * 3. 重置编辑器状态
- */
+// 新建文件操作处理
 void MainWindow::on_actionNew_triggered()
 {
     // 如果文档已修改,提示保存
@@ -124,17 +176,9 @@ void MainWindow::on_actionNew_triggered()
     filepath = "";                                // 清空文件路径
     this->setWindowTitle("新建文本文件--编辑器"); // 更新窗口标题
 }
-
-/**
- * 打开文件操作处理
- * 1. 检查当前文档是否需要保存
- * 2. 打开文件选择对话框
- * 3. 读取文件内容并显示
- * 4. 更新窗口标题和文件状态
- */
+// 打开文件操作处理
 void MainWindow::on_actionOpen_triggered()
 {
-
     if (ischanged)
     {
         QString path = filepath != "" ? filepath : "无标题";
@@ -160,72 +204,36 @@ void MainWindow::on_actionOpen_triggered()
     }
 
     QString filename = QFileDialog::getOpenFileName(this, "打开文件", ".", tr("Text files (*.txt);;All(*.*)"));
-    QFile file(filename);
-
-    if (!file.open(QFile::ReadOnly | QFile::Text))
-    {
-        return;
-    }
-
-    QTextStream in(&file);
-    QString text = in.readAll();
-    ui->TextEdit->insertPlainText(text);
-    file.close();
-
-    this->setWindowTitle(QFileInfo(filename).absoluteFilePath());
-    filepath = filename;
-    ischanged = false;
+    openFile(filename);
 }
 
+// 保存文件操作处理
 void MainWindow::on_actionSave_triggered()
 {
-    QFile file(filepath);
-    if (!file.open(QFile::WriteOnly | QFile::Text))
+    if (filepath.isEmpty())
     {
         on_actionSaveAs_triggered();
-        return;
     }
-    QTextStream out(&file);
-    QString text = ui->TextEdit->toPlainText();
-
-    out << text;
-    file.flush();
-    file.close();
-
-    ischanged = false;
-    this->setWindowTitle(filepath);
+    else
+    {
+        saveToFile(filepath);
+        IDataBase::getInstance().addLastOpenFilePath(filepath);
+    }
 }
-
+// 另存为文件操作处理
 void MainWindow::on_actionSaveAs_triggered()
 {
     QString filename = QFileDialog::getSaveFileName(this, "保存文件", ".", tr("Text files (*.txt);;All(*.*)"));
-    QFile file(filename);
-
-    if (!file.open(QFile::WriteOnly | QFile::Text))
+    if (!filename.isEmpty())
     {
-        return;
+        saveToFile(filename);
+        IDataBase::getInstance().addLastOpenFilePath(filename);
     }
-
-    QTextStream out(&file);
-    QString text = ui->TextEdit->toPlainText();
-
-    out << text;
-    file.flush();
-    file.close();
-
-    filepath = filename;
-    ischanged = false;
-    this->setWindowTitle(filepath);
 }
 
 // 编辑功能相关函数
 
-/**
- * 文本内容变更处理
- * 1. 更新修改状态标志
- * 2. 更新窗口标题(添加*号)
- * 3. 更新状态栏信息
- */
+// 文本内容变更处理
 void MainWindow::on_TextEdit_textChanged()
 {
     if (ischanged == false)
@@ -236,65 +244,60 @@ void MainWindow::on_TextEdit_textChanged()
 
     statusLabel.setText("Length: " + QString::number(ui->TextEdit->toPlainText().length()) + "   Lines: " + QString::number(ui->TextEdit->document()->lineCount()));
 }
-
+// 剪切
 void MainWindow::on_actionCut_triggered()
 {
     ui->TextEdit->cut();
 }
-
+// 复制
 void MainWindow::on_actionCopy_triggered()
 {
     ui->TextEdit->copy();
 }
-
+// 粘贴
 void MainWindow::on_actionPaste_triggered()
 {
     ui->TextEdit->paste();
 }
-
+// 重做
 void MainWindow::on_actionRedo_triggered()
 {
     ui->TextEdit->redo();
 }
-
+// 撤销
 void MainWindow::on_actionUndo_triggered()
 {
     ui->TextEdit->undo();
 }
-
+// 复制可用状态变化
 void MainWindow::on_TextEdit_copyAvailable(bool b)
 {
     ui->actionCopy->setEnabled(b);
     ui->actionCut->setEnabled(b);
 }
-
+// 重做可用状态变化
 void MainWindow::on_TextEdit_redoAvailable(bool b)
 {
     ui->actionRedo->setEnabled(b);
 }
-
+// 撤销可用状态变化
 void MainWindow::on_TextEdit_undoAvailable(bool b)
 {
     ui->actionUndo->setEnabled(b);
 }
-
+// 应用样式表更改
 void MainWindow::sumbitStyleSheet()
 {
     ui->TextEdit->setStyleSheet(textEditFontColor + "; " + textEditBgColor);
 }
-
-/**
- * 字体颜色设置
- * 1. 打开颜色选择对话框
- * 2. 应用所选颜色到文本
- */
+// 字体颜色设置
 void MainWindow::on_actionFontColor_triggered()
 {
     QColor color = QColorDialog::getColor(Qt::black, this, "选择颜色");
     textEditFontColor = "color:" + color.name();
     sumbitStyleSheet();
 }
-
+// 背景颜色设置
 void MainWindow::on_actionBgColor_triggered()
 {
 
@@ -302,7 +305,7 @@ void MainWindow::on_actionBgColor_triggered()
     textEditBgColor = "background-color:" + color.name();
     sumbitStyleSheet();
 }
-
+// 自动换行设置
 void MainWindow::on_actionLineWrap_triggered()
 {
     QPlainTextEdit::LineWrapMode mode = ui->TextEdit->lineWrapMode();
@@ -320,13 +323,7 @@ void MainWindow::on_actionLineWrap_triggered()
         ui->actionLineWrap->setChecked(false);
     }
 }
-
-/**
- * 状态栏显示控制
- * 1. 获取当前显示状态
- * 2. 切换显示/隐藏
- * 3. 更新菜单项选中状态
- */
+// 状态栏显示控制
 void MainWindow::on_actionShowStatusBar_triggered()
 {
     bool check = ui->statusbar->isVisible();
@@ -335,7 +332,7 @@ void MainWindow::on_actionShowStatusBar_triggered()
     ui->actionShowStatusBar->setChecked(!check);
     ui->statusbar->setVisible(!check);
 }
-
+// 显示工具栏
 void MainWindow::on_actionShowToolBar_triggered()
 {
     bool check = ui->toolBar->isVisible();
@@ -344,19 +341,13 @@ void MainWindow::on_actionShowToolBar_triggered()
     ui->actionShowToolBar->setChecked(!check);
     ui->toolBar->setVisible(!check);
 }
-
+// 退出时
 void MainWindow::on_actionExit_triggered()
 {
 
     close();
 }
-
-/**
- * 窗口关闭事件处理
- * 1. 检查文档是否需要保存
- * 2. 提示用户选择操作
- * 3. 根据用户选择执行相应操作
- */
+// 窗口关闭事件处理
 void MainWindow::closeEvent(QCloseEvent *e)
 {
     if (ischanged)
@@ -383,11 +374,12 @@ void MainWindow::closeEvent(QCloseEvent *e)
     }
 }
 
+// 光标位置改变时
 void MainWindow::on_TextEdit_cursorPositionChanged()
 {
     statusCursorLabel.setText("Ln: " + QString::number(ui->TextEdit->textCursor().blockNumber()) + "   Col: " + QString::number(ui->TextEdit->textCursor().columnNumber()));
 }
-
+// 显示行号功能
 void MainWindow::on_actionShowRowNum_triggered()
 {
     if (ui->actionShowRowNum->isChecked())
@@ -399,13 +391,13 @@ void MainWindow::on_actionShowRowNum_triggered()
         ui->TextEdit->hideLineNumberArea(true);
     }
 }
-
+// 全选功能
 void MainWindow::on_actionSelectAll_triggered()
 {
     ui->TextEdit->textCursor().setPosition(0);
     ui->TextEdit->textCursor().setPosition(-1, QTextCursor::KeepAnchor);
 }
-
+// 字体功能
 void MainWindow::on_actionFont_triggered()
 {
     bool ok = false;
@@ -413,5 +405,30 @@ void MainWindow::on_actionFont_triggered()
     if (ok)
     {
         ui->TextEdit->setFont(font);
+    }
+}
+
+// 最近打开文件功能
+void MainWindow::on_openLastFiles_aboutToShow()
+{
+    QAction *action;
+    QStringList filePaths = IDataBase::getInstance().getLastOpenFilePaths();
+
+    // 清空最近打开文件菜单
+    for (auto i : ui->openLastFiles->actions())
+    {
+        i->deleteLater();
+    }
+    ui->openLastFiles->clear();
+
+    // 重新添加最近打开文件
+    for (int i = 0; i < filePaths.size(); i++)
+    {
+        action = new QAction(this);
+        action->setText(filePaths[i]);
+        action->setData(filePaths[i]);
+        connect(action, &QAction::triggered, this, [this, action]()
+                { openFile(action->text()); });
+        ui->openLastFiles->addAction(action);
     }
 }

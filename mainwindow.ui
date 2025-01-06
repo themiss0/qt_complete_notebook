@@ -48,17 +48,23 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="file">
     <property name="title">
      <string>文件(&amp;F)</string>
     </property>
+    <widget class="QMenu" name="openLastFiles">
+     <property name="title">
+      <string>打开最近的文件</string>
+     </property>
+    </widget>
     <addaction name="actionOpen"/>
     <addaction name="actionNew"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
+    <addaction name="openLastFiles"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="edit">
@@ -372,6 +378,11 @@
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actiona">
+   <property name="text">
+    <string>a</string>
    </property>
   </action>
  </widget>

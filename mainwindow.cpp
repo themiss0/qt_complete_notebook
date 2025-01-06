@@ -431,4 +431,10 @@ void MainWindow::on_openLastFiles_aboutToShow()
                 { openFile(action->text()); });
         ui->openLastFiles->addAction(action);
     }
+    ui->openLastFiles->addSeparator();
+    auto deleteAll = new QAction("清空最近打开文件", this);
+    connect(deleteAll, &QAction::triggered, &IDataBase::getInstance(), &IDataBase::deleteAllLastOpenFilePaths);
+    deleteAll->setCheckable(false);
+    ui->openLastFiles->addAction(deleteAll);
+
 }

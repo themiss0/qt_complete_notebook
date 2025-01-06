@@ -76,20 +76,29 @@ bool IDataBase::addLastOpenFilePath(const QString &filePath)
 
     return true;
 }
+// 删除所有最近打开文件路径
+bool IDataBase::deleteAllLastOpenFilePaths()
+{
+    QSqlQuery query("DELETE FROM lastOpenFile");
+    if (!query.exec())
+    {
+        qDebug() << "Delete query execution failed:" << query.lastError().text();
+        return false;
+    }
+    return true;
+}
 
-/**
- * @brief 初始化数据库连接
- */
+// 初始化数据库连接
 void IDataBase::initDataBase()
 {
     // 创建SQLite数据库连接
     database = QSqlDatabase::addDatabase("QSQLITE");
-    
+
     // 设置数据库文件路径
     QString aFile = "../../database.db";
     QString context = QDir::currentPath();
     qDebug() << context;
-    
+
     database.setDatabaseName(aFile);
     if (!database.open())
     {

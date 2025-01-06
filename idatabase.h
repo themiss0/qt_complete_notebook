@@ -19,12 +19,7 @@ public:
     bool initPatientModel();
     QStringList getLastOpenFilePaths();
     bool addLastOpenFilePath(const QString &filePath);
-    int userLogin(QString userName, QString password);
-    int addPatient();
-    bool submitPatient();
-    bool deletePatient();
-    void revertPatient();
-    bool searchPatient(QString filter);
+    bool deleteAllLastOpenFilePaths();
 
     QSqlTableModel *patientTabModel;
     QItemSelectionModel *thePatientSelection;

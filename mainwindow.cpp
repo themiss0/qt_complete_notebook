@@ -55,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ischanged = false; // 初始化文档修改状态
 
-    favDialog = new FavDialog(this, filepath);                                       // 初始化收藏夹窗口
+    favDialog = new FavDialog(this, filepath);                             // 初始化收藏夹窗口
     favDialog->hide();                                                     // 默认隐藏
     connect(favDialog, &FavDialog::openFile, this, &MainWindow::openFile); // 连接打开文件信号
 }
@@ -245,6 +245,11 @@ void MainWindow::on_TextEdit_textChanged()
     {
         ischanged = true;
         this->setWindowTitle("*" + this->windowTitle());
+    }
+
+    if(ui->actionAutoSave->isChecked() && !filepath.isEmpty())
+    {
+        on_actionSave_triggered();
     }
 
     statusLabel.setText("Length: " + QString::number(ui->TextEdit->toPlainText().length()) + "   Lines: " + QString::number(ui->TextEdit->document()->lineCount()));
@@ -447,4 +452,3 @@ void MainWindow::on_actionFav_triggered()
 {
     favDialog->show();
 }
-

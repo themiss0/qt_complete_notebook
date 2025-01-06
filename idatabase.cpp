@@ -2,20 +2,15 @@
 #include <QUuid>
 #include <QVariant>
 
-/**
- * @brief 数据库操作类构造函数
- * @param parent 父对象指针
- */
+// 数据库操作类构造函数
 IDataBase::IDataBase(QObject *parent)
     : QObject{parent}
 {
     initDataBase();
 }
 
-/**
- * @brief 获取最近打开文件的路径列表
- * @return QStringList 文件路径列表
- */
+
+// 获取最近打开文件的路径列表
 QStringList IDataBase::getLastOpenFilePaths()
 {
     QStringList filePaths;
@@ -33,12 +28,7 @@ QStringList IDataBase::getLastOpenFilePaths()
     }
     return filePaths;
 }
-
-/**
- * @brief 向lastOpenFiles表写入路径字符串
- * @param filePath 文件路径
- * @return bool 操作是否成功
- */
+// 向lastOpenFiles表写入路径字符串
 bool IDataBase::addLastOpenFilePath(const QString &filePath)
 {
     QSqlQuery query;
@@ -87,10 +77,12 @@ bool IDataBase::deleteAllLastOpenFilePaths()
     }
     return true;
 }
+
+
 // 添加收藏文件路径
 bool IDataBase::addFavoriteFilePath(const QString &filePath)
 {
-    QSqlQuery query("INSERT INTO favoriteFile ( path) VALUES (:path)");
+    QSqlQuery query("INSERT INTO favPath ( path) VALUES (:path)");
     query.bindValue(":path", filePath);
     if (!query.exec())
     {
@@ -103,7 +95,7 @@ bool IDataBase::addFavoriteFilePath(const QString &filePath)
 bool IDataBase::deleteFavoriteFilePath(const QString &filePath)
 {
     QSqlQuery query;
-    query.prepare("DELETE FROM favoriteFile WHERE path = :path");
+    query.prepare("DELETE FROM favPath WHERE path = :path");
     query.bindValue(":path", filePath);
     if (!query.exec())
     {
@@ -116,7 +108,7 @@ bool IDataBase::deleteFavoriteFilePath(const QString &filePath)
 QStringList IDataBase::getFavoriteFilePaths()
 {
     QStringList filePaths;
-    QSqlQuery query("SELECT path FROM favoriteFile");
+    QSqlQuery query("SELECT path FROM favPath");
     if (!query.exec())
     {
         qDebug() << "Query execution failed:" << query.lastError().text();
@@ -128,6 +120,7 @@ QStringList IDataBase::getFavoriteFilePaths()
     }
     return filePaths;
 }
+
 
 // 初始化数据库连接
 void IDataBase::initDataBase()

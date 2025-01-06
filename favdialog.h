@@ -16,11 +16,11 @@ public:
     explicit FavDialog(QWidget *parent = nullptr);
     ~FavDialog();
 
+signals:
+    void openFile(const QString &s);
 protected:
     void showEvent(QShowEvent *event) override;
 
-signals:
-    void openFile(QString s);
 
 private slots:
     void on_bt_open_clicked();

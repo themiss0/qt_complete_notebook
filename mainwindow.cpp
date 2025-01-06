@@ -3,6 +3,8 @@
 #include "aboutdialog.h"
 #include "searchdialog.h"
 #include "replacedialog.h"
+#include "idatabase.h"
+
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTextStream>
@@ -10,7 +12,6 @@
 #include <iostream>
 #include <QPlainTextEdit>
 #include <QFontDialog>
-#include "idatabase.h"
 
 // 主窗口构造函数:初始化UI和各项设置
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -53,6 +54,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->actionShowRowNum->setChecked(true);    // 行号默认显示
 
     ischanged = false; // 初始化文档修改状态
+
+    favDialog = new FavDialog(this);                                       // 初始化收藏夹窗口
+    favDialog->hide();                                                     // 默认隐藏
+    connect(favDialog, &FavDialog::openFile, this, &MainWindow::openFile); // 连接打开文件信号
 }
 // 析构函数
 MainWindow::~MainWindow()
@@ -436,5 +441,10 @@ void MainWindow::on_openLastFiles_aboutToShow()
     connect(deleteAll, &QAction::triggered, &IDataBase::getInstance(), &IDataBase::deleteAllLastOpenFilePaths);
     deleteAll->setCheckable(false);
     ui->openLastFiles->addAction(deleteAll);
-
 }
+
+void MainWindow::on_actionFav_triggered()
+{
+    favDialog->show();
+}
+

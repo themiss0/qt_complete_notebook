@@ -87,6 +87,47 @@ bool IDataBase::deleteAllLastOpenFilePaths()
     }
     return true;
 }
+// 添加收藏文件路径
+bool IDataBase::addFavoriteFilePath(const QString &filePath)
+{
+    QSqlQuery query("INSERT INTO favoriteFile ( path) VALUES (:path)");
+    query.bindValue(":path", filePath);
+    if (!query.exec())
+    {
+        qDebug() << "Insert query execution failed:" << query.lastError().text();
+        return false;
+    }
+    return true;
+}
+// 删除收藏文件路径
+bool IDataBase::deleteFavoriteFilePath(const QString &filePath)
+{
+    QSqlQuery query;
+    query.prepare("DELETE FROM favoriteFile WHERE path = :path");
+    query.bindValue(":path", filePath);
+    if (!query.exec())
+    {
+        qDebug() << "Delete query execution failed:" << query.lastError().text();
+        return false;
+    }
+    return true;
+}
+// 获取收藏文件路径
+QStringList IDataBase::getFavoriteFilePaths()
+{
+    QStringList filePaths;
+    QSqlQuery query("SELECT path FROM favoriteFile");
+    if (!query.exec())
+    {
+        qDebug() << "Query execution failed:" << query.lastError().text();
+        return filePaths;
+    }
+    while (query.next())
+    {
+        filePaths << query.value(0).toString();
+    }
+    return filePaths;
+}
 
 // 初始化数据库连接
 void IDataBase::initDataBase()

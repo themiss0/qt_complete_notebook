@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QLabel>
+#include "favdialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -53,6 +54,7 @@ private slots:
     void on_actionSelectAll_triggered();         // 全选
     void on_actionFont_triggered();              // 字体设置
     void on_openLastFiles_aboutToShow();
+    void on_actionFav_triggered();
 
     void closeEvent(QCloseEvent *e);             // 关闭事件处理器
 
@@ -65,8 +67,8 @@ private:
     QString textEditFontColor;    // 字体颜色
     QString textEditBgColor;      // 背景颜色 
     bool ischanged;              // 文件是否被修改
-
     void saveToFile(const QString &filename); // 保存文件
     bool openFile(const QString &filePath); // 打开文件
+    FavDialog *favDialog;         // 收藏夹窗口
 };
 #endif // MAINWINDOW_H

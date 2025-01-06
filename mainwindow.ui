@@ -64,6 +64,7 @@
     <addaction name="actionNew"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
+    <addaction name="actionFav"/>
     <addaction name="openLastFiles"/>
     <addaction name="actionExit"/>
    </widget>
@@ -380,9 +381,9 @@
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
-  <action name="actiona">
+  <action name="actionFav">
    <property name="text">
-    <string>a</string>
+    <string>收藏夹</string>
    </property>
   </action>
  </widget>

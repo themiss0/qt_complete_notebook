@@ -16,13 +16,15 @@ public:
         return instance;
     }
 
-    bool initPatientModel();
+    // 最近打开文件路径
     QStringList getLastOpenFilePaths();
     bool addLastOpenFilePath(const QString &filePath);
     bool deleteAllLastOpenFilePaths();
 
-    QSqlTableModel *patientTabModel;
-    QItemSelectionModel *thePatientSelection;
+    // 
+    bool addFavoriteFilePath(const QString &filePath);
+    bool deleteFavoriteFilePath(const QString &filePath);
+    QStringList getFavoriteFilePaths();
 
 private:
     explicit IDataBase(QObject *parent = nullptr);

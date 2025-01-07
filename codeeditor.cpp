@@ -6,6 +6,7 @@
 #include <QTextBlock>
 #include <QTextEdit>
 #include <QApplication>
+#include <QCursor>
 
 // 构造函数:初始化行号区域并连接信号槽
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
@@ -80,7 +81,6 @@ void CodeEditor::mousePressEvent(QMouseEvent *event)
         if (!anchor.isEmpty())
         {
             QDesktopServices::openUrl(QUrl(anchor));
-            return;
         }
     }
     QPlainTextEdit::mousePressEvent(event);
@@ -101,12 +101,12 @@ void CodeEditor::mouseMoveEvent(QMouseEvent *event)
         {
             viewport()->setCursor(Qt::IBeamCursor);
         }
-        QPlainTextEdit::mouseMoveEvent(event);
     }
     else
     {
         viewport()->setCursor(Qt::IBeamCursor);
     }
+    QPlainTextEdit::mouseMoveEvent(event);
 }
 // 插入超链接
 void CodeEditor::insertHyperlink(const QString &text, const QString &url)
@@ -119,6 +119,38 @@ void CodeEditor::insertHyperlink(const QString &text, const QString &url)
 
     QTextCursor cursor = textCursor();
     cursor.insertText(text, format);
+}
+// 键盘按下事件
+void CodeEditor::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Control)
+    {
+        QTextCursor cursor = cursorForPosition(QCursor::pos());
+        QString anchor = cursor.charFormat().anchorHref();
+        if (!anchor.isEmpty())
+        {
+            viewport()->setCursor(Qt::PointingHandCursor);
+        }
+        else
+        {
+            viewport()->setCursor(Qt::IBeamCursor);
+        }
+    }
+    else
+    {
+        viewport()->setCursor(Qt::IBeamCursor);
+    }
+    QPlainTextEdit::keyPressEvent(event);
+}
+// 键盘释放事件
+void CodeEditor::keyReleaseEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Control)
+    {
+
+            viewport()->setCursor(Qt::IBeamCursor);
+    }
+    QPlainTextEdit::keyReleaseEvent(event);
 }
 
 // 检测超链接
@@ -144,6 +176,19 @@ void CodeEditor::detectHyperlink()
         cursor.setCharFormat(format);
     }
     cursor.endEditBlock();
+}
+
+void CodeEditor::cleanAllHyperlink()
+{
+    QTextCursor cursor(document());          // 获取文档的光标
+    cursor.movePosition(QTextCursor::Start); // 将光标移动到文档开头
+
+    // 选择整个文档
+    cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+
+    // 清除样式
+    QTextCharFormat defaultFormat;         // 默认格式
+    cursor.mergeCharFormat(defaultFormat); // 应用默认格式
 }
 
 // 高亮当前行

@@ -129,20 +129,22 @@ void MainWindow::on_actionAbout_triggered()
     // AboutDialog aboutDialog;
     // aboutDialog.exec();
 
-    QTextCharFormat fmt;
+    // QTextCharFormat fmt;
 
-    fmt.setAnchor(true);
-    fmt.setAnchorHref("https://www.baidu.com");
-    fmt.setForeground(Qt::blue);
-    fmt.setFontUnderline(true);
+    // fmt.setAnchor(true);
+    // fmt.setAnchorHref("https://www.baidu.com");
+    // fmt.setForeground(Qt::blue);
+    // fmt.setFontUnderline(true);
     
-    auto cursor = ui->TextEdit->textCursor();
-    cursor.insertText("百度", fmt);
+    // auto cursor = ui->TextEdit->textCursor();
+    // cursor.insertText("百度", fmt);
 
-    // 恢复默认样式
-    QTextCharFormat defaultFormat;
-    cursor.insertText("恢复默认样式", defaultFormat);
+    // // 恢复默认样式
+    // QTextCharFormat defaultFormat;
+    // cursor.insertText("恢复默认样式", defaultFormat);
     
+    ui->TextEdit->cleanAllHyperlink();
+    ui->TextEdit->detectHyperlink();
 }
 // 查找对话框的槽函数
 void MainWindow::on_actionFind_triggered()

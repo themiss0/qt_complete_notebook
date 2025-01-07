@@ -18,13 +18,16 @@ public:
     void lineNumberAreaPaintEvent(QPaintEvent *event); // 绘制行号
     int lineNumberAreaWidth();                         // 计算行号区域宽度
     void hideLineNumberArea(bool flag);                // 显示/隐藏行号
+    void detectHyperlink(); // 检测超链接
+    void cleanAllHyperlink(); // 清除所有超链接
 
 protected:
     void resizeEvent(QResizeEvent *event) override; // 重写大小调整事件
     void mousePressEvent(QMouseEvent *event) override;// 鼠标按下事件
     void mouseMoveEvent(QMouseEvent *event) override;// 鼠标移动事件
     void insertHyperlink(const QString &text, const QString &url); // 插入超链接
-    void detectHyperlink(); // 检测超链接
+    void keyPressEvent(QKeyEvent *event) override; // 键盘按下事件
+    void keyReleaseEvent(QKeyEvent *event) override; // 键盘释放事件
 
 private slots:
     void updateLineNumberAreaWidth(int newBlockCount);    // 更新行号区域宽度

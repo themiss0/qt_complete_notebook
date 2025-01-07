@@ -126,8 +126,18 @@ bool MainWindow::openFile(const QString &pathName)
 // 关于对话框的槽函数
 void MainWindow::on_actionAbout_triggered()
 {
-    AboutDialog aboutDialog;
-    aboutDialog.exec();
+    // AboutDialog aboutDialog;
+    // aboutDialog.exec();
+
+    QTextCharFormat fmt;
+
+    fmt.setAnchor(true);
+    fmt.setAnchorHref("baidu.com");
+    fmt.setForeground(Qt::blue);
+    fmt.setFontUnderline(true);
+    
+    auto cursor = ui->TextEdit->textCursor();
+    cursor.insertText("百度", fmt);
 }
 // 查找对话框的槽函数
 void MainWindow::on_actionFind_triggered()

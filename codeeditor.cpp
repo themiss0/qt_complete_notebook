@@ -86,7 +86,6 @@ void CodeEditor::highlightCurrentLine()
         selection.cursor.clearSelection();
         extraSelections.append(selection);
     }
-
     setExtraSelections(extraSelections);
 }
 
@@ -135,3 +134,4 @@ void CodeEditor::hideLineNumberArea(bool flag)
         setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
     }
 }
+

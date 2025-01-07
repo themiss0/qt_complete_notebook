@@ -22,6 +22,11 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 
     updateLineNumberAreaWidth(0);
     highlightCurrentLine();
+
+    highlighter =new CodeHighlighter(document());
+    QVector<HighlightingRule> rules = RuleReader::readRules("../../role.json", "cpp");
+    highlighter->setHighlightingRules(rules);
+
 }
 
 // 计算行号区域宽度

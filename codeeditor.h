@@ -6,6 +6,7 @@
 #include <QMouseEvent>
 #include <QDesktopServices>
 #include <QRegularExpression>
+#include "CodeHighlighter.h"
 
 class CodeEditor : public QPlainTextEdit
 {
@@ -36,6 +37,7 @@ private slots:
 
 private:
     QWidget *lineNumberArea; // 行号显示区域
+    CodeHighlighter *highlighter;
 };
 
 // 行号区域类

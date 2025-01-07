@@ -135,14 +135,14 @@ void MainWindow::on_actionAbout_triggered()
     // fmt.setAnchorHref("https://www.baidu.com");
     // fmt.setForeground(Qt::blue);
     // fmt.setFontUnderline(true);
-    
+
     // auto cursor = ui->TextEdit->textCursor();
     // cursor.insertText("百度", fmt);
 
     // // 恢复默认样式
     // QTextCharFormat defaultFormat;
     // cursor.insertText("恢复默认样式", defaultFormat);
-    
+
     ui->TextEdit->cleanAllHyperlink();
     ui->TextEdit->detectHyperlink();
 }
@@ -258,18 +258,27 @@ void MainWindow::on_actionSaveAs_triggered()
 // 文本内容变更处理
 void MainWindow::on_TextEdit_textChanged()
 {
+    static bool isProcessing = false;
+
+    if(isProcessing){
+        return;
+    }
+    
+    isProcessing = true;
     if (ischanged == false)
     {
         ischanged = true;
         this->setWindowTitle("*" + this->windowTitle());
     }
 
-    if(ui->actionAutoSave->isChecked() && !filepath.isEmpty())
+    if (ui->actionAutoSave->isChecked() && !filepath.isEmpty())
     {
         on_actionSave_triggered();
     }
+    ui->TextEdit->cleanAllHyperlink();
+    ui->TextEdit->detectHyperlink();
 
-    statusLabel.setText("Length: " + QString::number(ui->TextEdit->toPlainText().length()) + "   Lines: " + QString::number(ui->TextEdit->document()->lineCount()));
+    isProcessing = false;
 }
 // 剪切
 void MainWindow::on_actionCut_triggered()

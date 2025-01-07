@@ -188,7 +188,7 @@ void CodeEditor::cleanAllHyperlink()
 
     // 清除样式
     QTextCharFormat defaultFormat;         // 默认格式
-    cursor.mergeCharFormat(defaultFormat); // 应用默认格式
+    cursor.setCharFormat(defaultFormat); // 应用默认格式
 }
 
 // 高亮当前行

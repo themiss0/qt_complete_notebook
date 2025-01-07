@@ -132,12 +132,17 @@ void MainWindow::on_actionAbout_triggered()
     QTextCharFormat fmt;
 
     fmt.setAnchor(true);
-    fmt.setAnchorHref("baidu.com");
+    fmt.setAnchorHref("https://www.baidu.com");
     fmt.setForeground(Qt::blue);
     fmt.setFontUnderline(true);
     
     auto cursor = ui->TextEdit->textCursor();
     cursor.insertText("百度", fmt);
+
+    // 恢复默认样式
+    QTextCharFormat defaultFormat;
+    cursor.insertText("恢复默认样式", defaultFormat);
+    
 }
 // 查找对话框的槽函数
 void MainWindow::on_actionFind_triggered()

@@ -3,29 +3,36 @@
 #include <QObject>
 #include <QPlainTextEdit>
 #include <QPaintEvent>
+#include <QMouseEvent>
+#include <QDesktopServices>
+#include <QRegularExpression>
 
 class CodeEditor : public QPlainTextEdit
 {
     Q_OBJECT
 
 public:
-    CodeEditor(QWidget *parent = nullptr);  // 构造函数
+    CodeEditor(QWidget *parent = nullptr); // 构造函数
 
     // 行号区域相关函数
-    void lineNumberAreaPaintEvent(QPaintEvent *event);   // 绘制行号
-    int lineNumberAreaWidth();                           // 计算行号区域宽度
-    void hideLineNumberArea(bool flag);                  // 显示/隐藏行号
+    void lineNumberAreaPaintEvent(QPaintEvent *event); // 绘制行号
+    int lineNumberAreaWidth();                         // 计算行号区域宽度
+    void hideLineNumberArea(bool flag);                // 显示/隐藏行号
 
 protected:
-    void resizeEvent(QResizeEvent *event) override;     // 重写大小调整事件
+    void resizeEvent(QResizeEvent *event) override; // 重写大小调整事件
+    void mousePressEvent(QMouseEvent *event) override;// 鼠标按下事件
+    void mouseMoveEvent(QMouseEvent *event) override;// 鼠标移动事件
+    void insertHyperlink(const QString &text, const QString &url); // 插入超链接
+    void detectHyperlink(); // 检测超链接
 
 private slots:
-    void updateLineNumberAreaWidth(int newBlockCount);   // 更新行号区域宽度
-    void highlightCurrentLine();                        // 高亮当前行
+    void updateLineNumberAreaWidth(int newBlockCount);    // 更新行号区域宽度
+    void highlightCurrentLine();                          // 高亮当前行
     void updateLineNumberArea(const QRect &rect, int dy); // 更新行号区域
 
 private:
-    QWidget *lineNumberArea;                           // 行号显示区域
+    QWidget *lineNumberArea; // 行号显示区域
 };
 
 // 行号区域类
@@ -48,6 +55,6 @@ protected:
     }
 
 private:
-    CodeEditor *codeEditor;             // 所属编辑器
+    CodeEditor *codeEditor; // 所属编辑器
 };
 #endif

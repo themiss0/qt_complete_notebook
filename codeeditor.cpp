@@ -4,6 +4,8 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QTextBlock>
+#include <QTextEdit>
+#include <QApplication>
 
 // 构造函数:初始化行号区域并连接信号槽
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
@@ -14,6 +16,8 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     connect(this, &CodeEditor::blockCountChanged, this, &CodeEditor::updateLineNumberAreaWidth);
     connect(this, &CodeEditor::updateRequest, this, &CodeEditor::updateLineNumberArea);
     connect(this, &CodeEditor::cursorPositionChanged, this, &CodeEditor::highlightCurrentLine);
+
+    setMouseTracking(true);
 
     updateLineNumberAreaWidth(0);
     highlightCurrentLine();
@@ -65,6 +69,81 @@ void CodeEditor::resizeEvent(QResizeEvent *e)
 
     QRect cr = contentsRect();
     lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
+}
+// 鼠标按下事件
+void CodeEditor::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton && (QApplication::keyboardModifiers() & Qt::ControlModifier))
+    {
+        QTextCursor cursor = cursorForPosition(event->pos());
+        QString anchor = cursor.charFormat().anchorHref();
+        if (!anchor.isEmpty())
+        {
+            QDesktopServices::openUrl(QUrl(anchor));
+            return;
+        }
+    }
+    QPlainTextEdit::mousePressEvent(event);
+}
+// 鼠标移动事件
+void CodeEditor::mouseMoveEvent(QMouseEvent *event)
+{
+
+    if ((QApplication::keyboardModifiers() & Qt::ControlModifier))
+    {
+        QTextCursor cursor = cursorForPosition(event->pos());
+        QString anchor = cursor.charFormat().anchorHref();
+        if (!anchor.isEmpty())
+        {
+            viewport()->setCursor(Qt::PointingHandCursor);
+        }
+        else
+        {
+            viewport()->setCursor(Qt::IBeamCursor);
+        }
+        QPlainTextEdit::mouseMoveEvent(event);
+    }
+    else
+    {
+        viewport()->setCursor(Qt::IBeamCursor);
+    }
+}
+// 插入超链接
+void CodeEditor::insertHyperlink(const QString &text, const QString &url)
+{
+    QTextCharFormat format;
+    format.setAnchor(true);
+    format.setAnchorHref(url);
+    format.setForeground(Qt::blue);
+    format.setFontUnderline(true);
+
+    QTextCursor cursor = textCursor();
+    cursor.insertText(text, format);
+}
+
+// 检测超链接
+void CodeEditor::detectHyperlink()
+{
+    QString text = toPlainText();
+    QRegularExpression urlRegex(R"((https?://\S+))");
+    QRegularExpressionMatchIterator it = urlRegex.globalMatch(text);
+
+    QTextCursor cursor = textCursor();
+    cursor.beginEditBlock();
+    while (it.hasNext())
+    {
+        QRegularExpressionMatch match = it.next();
+        QString url = match.captured(0);
+        cursor.setPosition(match.capturedStart());
+        cursor.setPosition(match.capturedEnd(), QTextCursor::KeepAnchor);
+        QTextCharFormat format;
+        format.setAnchor(true);
+        format.setAnchorHref(url);
+        format.setForeground(Qt::blue);
+        format.setFontUnderline(true);
+        cursor.setCharFormat(format);
+    }
+    cursor.endEditBlock();
 }
 
 // 高亮当前行
@@ -134,4 +213,3 @@ void CodeEditor::hideLineNumberArea(bool flag)
         setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
     }
 }
-

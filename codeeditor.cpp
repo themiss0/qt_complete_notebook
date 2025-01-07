@@ -80,6 +80,11 @@ void CodeEditor::mousePressEvent(QMouseEvent *event)
         QString anchor = cursor.charFormat().anchorHref();
         if (!anchor.isEmpty())
         {
+            if (anchor.contains("@"))
+            {
+                // 处理邮箱链接
+                anchor = "mailto:" + anchor;
+            }
             QDesktopServices::openUrl(QUrl(anchor));
         }
     }
@@ -148,7 +153,7 @@ void CodeEditor::keyReleaseEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Control)
     {
 
-            viewport()->setCursor(Qt::IBeamCursor);
+        viewport()->setCursor(Qt::IBeamCursor);
     }
     QPlainTextEdit::keyReleaseEvent(event);
 }
@@ -157,7 +162,8 @@ void CodeEditor::keyReleaseEvent(QKeyEvent *event)
 void CodeEditor::detectHyperlink()
 {
     QString text = toPlainText();
-    QRegularExpression urlRegex(R"((https?://\S+))");
+    // 检测ftp连接、http连接和邮箱
+    QRegularExpression urlRegex(R"((https?://\S+)|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|(ftp://\S+))");
     QRegularExpressionMatchIterator it = urlRegex.globalMatch(text);
 
     QTextCursor cursor = textCursor();
@@ -177,7 +183,7 @@ void CodeEditor::detectHyperlink()
     }
     cursor.endEditBlock();
 }
-
+// 清除全局超链接
 void CodeEditor::cleanAllHyperlink()
 {
     QTextCursor cursor(document());          // 获取文档的光标
@@ -187,7 +193,7 @@ void CodeEditor::cleanAllHyperlink()
     cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
 
     // 清除样式
-    QTextCharFormat defaultFormat;         // 默认格式
+    QTextCharFormat defaultFormat;       // 默认格式
     cursor.setCharFormat(defaultFormat); // 应用默认格式
 }
 

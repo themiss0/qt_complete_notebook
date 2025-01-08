@@ -31,6 +31,7 @@ void FavDialog::on_bt_open_clicked()
     {
         return;
     }
+    
     QString s = ui->listWidget->selectedItems().first()->text();
     qDebug() << s;
     emit openFile(s);

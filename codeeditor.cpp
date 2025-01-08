@@ -23,10 +23,6 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     updateLineNumberAreaWidth(0);
     highlightCurrentLine();
 
-    highlighter =new CodeHighlighter(document());
-    QVector<HighlightingRule> rules = RuleReader::readRules("../../role.json", "cpp");
-    highlighter->setHighlightingRules(rules);
-
 }
 
 // 计算行号区域宽度
@@ -188,8 +184,8 @@ void CodeEditor::detectHyperlink()
     }
     cursor.endEditBlock();
 }
-// 清除全局超链接
-void CodeEditor::cleanAllHyperlink()
+// 清除全局样式
+void CodeEditor::cleanAllFormat()
 {
     QTextCursor cursor(document());          // 获取文档的光标
     cursor.movePosition(QTextCursor::Start); // 将光标移动到文档开头
@@ -200,6 +196,18 @@ void CodeEditor::cleanAllHyperlink()
     // 清除样式
     QTextCharFormat defaultFormat;       // 默认格式
     cursor.setCharFormat(defaultFormat); // 应用默认格式
+}
+// 读取高亮规则
+void CodeEditor::setHightligter(const QString &language)
+{
+    if(highlighter != nullptr)
+    {
+        delete highlighter;
+    }
+    cleanAllFormat();
+    highlighter = new CodeHighlighter(document());
+    QVector<HighlightingRule> rules = RuleReader::readRules("../../rule.json", language);
+    highlighter->setHighlightingRules(rules);
 }
 
 // 高亮当前行

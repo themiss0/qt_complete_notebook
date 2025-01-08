@@ -3,6 +3,9 @@
 
 QVector<HighlightingRule> RuleReader::readRules(const QString &filePath, const QString &language)
 {
+
+
+
     QVector<HighlightingRule> rules;
 
     // 打开 JSON 文件

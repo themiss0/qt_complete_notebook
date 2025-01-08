@@ -84,6 +84,7 @@ void MainWindow::saveToFile(const QString &filename)
     file.flush();
     file.close();
 
+    ui->TextEdit->setHightligter(QFileInfo(filepath).suffix());
     filepath = filename;
     ischanged = false;
     this->setWindowTitle(filepath);
@@ -91,6 +92,19 @@ void MainWindow::saveToFile(const QString &filename)
 // 打开文件
 bool MainWindow::openFile(const QString &pathName)
 {
+
+    int re = isSave();
+    switch (re)
+    {
+    case QMessageBox::Yes:
+        on_actionSave_triggered();
+        break;
+    case QMessageBox::No:
+        break;
+    case QMessageBox::Cancel:
+        return true;
+    }
+    
     QFile file(pathName);
 
     if (!file.open(QFile::ReadOnly | QFile::Text))
@@ -114,11 +128,30 @@ bool MainWindow::openFile(const QString &pathName)
     file.close();
     // 更新窗口标题
     this->setWindowTitle(QFileInfo(pathName).absoluteFilePath());
+    // 设置高亮规则
+    ui->TextEdit->setHightligter(QFileInfo(pathName).suffix());
     // 更新文件路径
     filepath = pathName;
     // 重置更改状态
     ischanged = false;
     return true;
+}
+// 是否保存
+int MainWindow::isSave()
+{
+    if (ischanged)
+    {
+        QString path = filepath != "" ? filepath : "无标题";
+        QMessageBox box(this);
+        box.setWindowTitle("文本编辑器");
+        box.setIcon(QMessageBox::Question);
+        box.setWindowFlag(Qt::Drawer);
+        box.setText(QString("你想将更改保存到\n") + path + "吗?");
+        box.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+
+        return box.exec();
+    }
+    return QMessageBox::No;
 }
 
 // 槽函数
@@ -147,32 +180,18 @@ void MainWindow::on_actionReplace_triggered()
 // 新建文件操作处理
 void MainWindow::on_actionNew_triggered()
 {
-    // 如果文档已修改,提示保存
-    if (ischanged)
+
+    // 处理用户选择
+    int re = isSave();
+    switch (re)
     {
-        // 获取文件路径,如果未保存则显示"无标题"
-        QString path = filepath != "" ? filepath : "无标题";
-
-        // 创建保存提示对话框
-        QMessageBox box(this);
-        box.setWindowTitle("文本编辑器");
-        box.setIcon(QMessageBox::Question);
-        box.setWindowFlag(Qt::Drawer);
-        box.setText(QString("你想将更改保存到\n") + path + "吗?");
-        box.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-
-        // 处理用户选择
-        int re = box.exec();
-        switch (re)
-        {
-        case QMessageBox::Yes: // 选择保存
-            on_actionSave_triggered();
-            break;
-        case QMessageBox::No: // 选择不保存
-            break;
-        case QMessageBox::Cancel: // 取消操作
-            return;
-        }
+    case QMessageBox::Yes: // 选择保存
+        on_actionSave_triggered();
+        break;
+    case QMessageBox::No: // 选择不保存
+        break;
+    case QMessageBox::Cancel: // 取消操作
+        return;
     }
 
     // 重置编辑器状态
@@ -184,28 +203,16 @@ void MainWindow::on_actionNew_triggered()
 // 打开文件操作处理
 void MainWindow::on_actionOpen_triggered()
 {
-    if (ischanged)
+    int re = isSave();
+    switch (re)
     {
-        QString path = filepath != "" ? filepath : "无标题";
-        QMessageBox box(this);
-        box.setWindowTitle("文本编辑器");
-        box.setIcon(QMessageBox::Question);
-        box.setWindowFlag(Qt::Drawer);
-        box.setText(QString("你想将更改保存到\n") + path + "吗?");
-        box.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-
-        int re = box.exec();
-        switch (re)
-        {
-        case QMessageBox::Yes:
-            on_actionSave_triggered();
-            break;
-
-        case QMessageBox::No:
-            break;
-        case QMessageBox::Cancel:
-            return;
-        }
+    case QMessageBox::Yes:
+        on_actionSave_triggered();
+        break;
+    case QMessageBox::No:
+        break;
+    case QMessageBox::Cancel:
+        return;
     }
 
     QString filename = QFileDialog::getOpenFileName(this, "打开文件", ".", tr("Text files (*.txt);;All(*.*)"));
@@ -225,6 +232,7 @@ void MainWindow::on_actionSave_triggered()
         IDataBase::getInstance().addLastOpenFilePath(filepath);
     }
 }
+
 // 另存为文件操作处理
 void MainWindow::on_actionSaveAs_triggered()
 {
@@ -243,10 +251,11 @@ void MainWindow::on_TextEdit_textChanged()
 {
     static bool isProcessing = false;
 
-    if(isProcessing){
+    if (isProcessing)
+    {
         return;
     }
-    
+
     isProcessing = true;
     if (ischanged == false)
     {
@@ -258,7 +267,7 @@ void MainWindow::on_TextEdit_textChanged()
     {
         on_actionSave_triggered();
     }
-    ui->TextEdit->cleanAllHyperlink();
+    ui->TextEdit->cleanAllFormat();
     ui->TextEdit->detectHyperlink();
 
     isProcessing = false;
@@ -456,7 +465,7 @@ void MainWindow::on_openLastFiles_aboutToShow()
     deleteAll->setCheckable(false);
     ui->openLastFiles->addAction(deleteAll);
 }
-
+// 打开收藏夹
 void MainWindow::on_actionFav_triggered()
 {
     favDialog->show();

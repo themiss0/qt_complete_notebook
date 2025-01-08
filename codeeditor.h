@@ -20,7 +20,8 @@ public:
     int lineNumberAreaWidth();                         // 计算行号区域宽度
     void hideLineNumberArea(bool flag);                // 显示/隐藏行号
     void detectHyperlink(); // 检测超链接
-    void cleanAllHyperlink(); // 清除所有超链接
+    void cleanAllFormat(); // 清除所有超链接
+    void setHightligter(const QString &language); // 读取高亮规则
 
 protected:
     void resizeEvent(QResizeEvent *event) override; // 重写大小调整事件
@@ -37,7 +38,7 @@ private slots:
 
 private:
     QWidget *lineNumberArea; // 行号显示区域
-    CodeHighlighter *highlighter;
+    CodeHighlighter *highlighter = nullptr;
 };
 
 // 行号区域类

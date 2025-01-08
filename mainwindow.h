@@ -20,6 +20,7 @@ public:
     MainWindow(QWidget *parent = nullptr); // 主窗口构造函数
     ~MainWindow();  // 析构函数
     void sumbitStyleSheet(); // 应用样式表更改
+    int isSave(); // 是否保存
 
 
 
@@ -68,8 +69,11 @@ private:
     QString textEditFontColor;    // 字体颜色
     QString textEditBgColor;      // 背景颜色 
     bool ischanged;              // 文件是否被修改
+
     void saveToFile(const QString &filename); // 保存文件
     bool openFile(const QString &filePath); // 打开文件
+    
+
     FavDialog *favDialog;         // 收藏夹窗口
     QString filepath;             // 当前文件路径
 };

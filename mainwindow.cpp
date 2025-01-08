@@ -9,7 +9,6 @@
 #include <QMessageBox>
 #include <QTextStream>
 #include <qcolordialog.h>
-#include <iostream>
 #include <QPlainTextEdit>
 #include <QFontDialog>
 #include <QFileInfo>
@@ -56,9 +55,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ischanged = false; // 初始化文档修改状态
 
-    favDialog = new FavDialog(this, filepath);                             // 初始化收藏夹窗口
-    favDialog->hide();                                                     // 默认隐藏
-    connect(favDialog, &FavDialog::openFile, this, &MainWindow::openFile); // 连接打开文件信号
+    favDialog = new FavDialog(this, filepath);                                // 初始化收藏夹窗口
+    favDialog->hide();                                                        // 默认隐藏
+    connect(favDialog, &FavDialog::openFile, this, &MainWindow::favOpenFile); // 连接打开文件信号
 }
 // 析构函数
 MainWindow::~MainWindow()
@@ -85,7 +84,7 @@ void MainWindow::saveToFile(const QString &filename)
     file.flush();
     file.close();
 
-    ui->TextEdit->setHightligter(QFileInfo(filepath).suffix());
+    setHighlighter(QFileInfo(filename).suffix(), theme);
     filepath = filename;
     ischanged = false;
     this->setWindowTitle(filepath);
@@ -93,19 +92,6 @@ void MainWindow::saveToFile(const QString &filename)
 // 打开文件
 bool MainWindow::openFile(const QString &pathName)
 {
-
-    int re = isSave();
-    switch (re)
-    {
-    case QMessageBox::Yes:
-        on_actionSave_triggered();
-        break;
-    case QMessageBox::No:
-        break;
-    case QMessageBox::Cancel:
-        return true;
-    }
-
     QFile file(pathName);
 
     if (!file.open(QFile::ReadOnly | QFile::Text))
@@ -130,12 +116,19 @@ bool MainWindow::openFile(const QString &pathName)
     // 更新窗口标题
     this->setWindowTitle(QFileInfo(pathName).absoluteFilePath());
     // 设置高亮规则
-    ui->TextEdit->setHightligter(QFileInfo(pathName).suffix());
+    setHighlighter(QFileInfo(pathName).suffix(), theme);
     // 更新文件路径
     filepath = pathName;
     // 重置更改状态
     ischanged = false;
     return true;
+}
+// 设置高亮规则
+void MainWindow::setHighlighter(const QString &language, const QString &theme)
+{
+    disconnect(ui->TextEdit, &QPlainTextEdit::textChanged, this, &MainWindow::on_TextEdit_textChanged);
+    ui->TextEdit->setHightligter(language, theme);
+    connect(ui->TextEdit, &QPlainTextEdit::textChanged, this, &MainWindow::on_TextEdit_textChanged);
 }
 // 是否保存
 int MainWindow::isSave()
@@ -319,6 +312,23 @@ void MainWindow::submitStyle(const QString &style)
 {
     setStyleSheet(style);
 }
+// 收藏夹打开文件
+bool MainWindow::favOpenFile(const QString &style)
+{
+    int re = isSave();
+    switch (re)
+    {
+    case QMessageBox::Yes:
+        on_actionSave_triggered();
+        break;
+    case QMessageBox::No:
+        break;
+    case QMessageBox::Cancel:
+        return true;
+    }
+
+    return openFile(style);
+}
 
 // 自动换行设置
 void MainWindow::on_actionLineWrap_triggered()
@@ -337,24 +347,6 @@ void MainWindow::on_actionLineWrap_triggered()
 
         ui->actionLineWrap->setChecked(false);
     }
-}
-// 状态栏显示控制
-void MainWindow::on_actionShowStatusBar_triggered()
-{
-    bool check = ui->statusbar->isVisible();
-    std::cout << check << std::endl;
-
-    ui->actionShowStatusBar->setChecked(!check);
-    ui->statusbar->setVisible(!check);
-}
-// 显示工具栏
-void MainWindow::on_actionShowToolBar_triggered()
-{
-    bool check = ui->toolBar->isVisible();
-    std::cout << check << std::endl;
-
-    ui->actionShowToolBar->setChecked(!check);
-    ui->toolBar->setVisible(!check);
 }
 // 退出时
 void MainWindow::on_actionExit_triggered()
@@ -480,8 +472,13 @@ void MainWindow::on_theme_aboutToShow()
         }
         ac = new QAction(ui->theme);
         ac->setText(QFileInfo(themes[i]).baseName());
-        connect(ac, &QAction::triggered, this, [style, this]()
-                { setStyleSheet(style); });
+
+        connect(ac, &QAction::triggered, this, [style, this, ac]()
+                {
+            theme = ac->text();
+            setStyleSheet(style);
+            // 设置高亮规则
+            setHighlighter(QFileInfo(filepath).suffix(), ac->text()); });
         ui->theme->addAction(ac);
     }
 }

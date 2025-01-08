@@ -16,13 +16,10 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     // 连接信号槽
     connect(this, &CodeEditor::blockCountChanged, this, &CodeEditor::updateLineNumberAreaWidth);
     connect(this, &CodeEditor::updateRequest, this, &CodeEditor::updateLineNumberArea);
-    connect(this, &CodeEditor::cursorPositionChanged, this, &CodeEditor::highlightCurrentLine);
 
     setMouseTracking(true);
 
     updateLineNumberAreaWidth(0);
-    highlightCurrentLine();
-
 }
 
 // 计算行号区域宽度
@@ -198,38 +195,16 @@ void CodeEditor::cleanAllFormat()
     cursor.setCharFormat(defaultFormat); // 应用默认格式
 }
 // 读取高亮规则
-void CodeEditor::setHightligter(const QString &language)
+void CodeEditor::setHightligter(const QString &language, const QString &theme)
 {
-    if(highlighter != nullptr)
+    if (highlighter != nullptr)
     {
         delete highlighter;
     }
     cleanAllFormat();
     highlighter = new CodeHighlighter(document());
-    QVector<HighlightingRule> rules = RuleReader::readRules("../../rule.json", language);
+    QVector<HighlightingRule> rules = RuleReader::readRules("../../highlightRule/" + theme + ".json", language);
     highlighter->setHighlightingRules(rules);
-}
-
-// 高亮当前行
-void CodeEditor::highlightCurrentLine()
-{
-    QList<QTextEdit::ExtraSelection> extraSelections;
-
-    // 仅在非只读模式下高亮当前行
-    if (!isReadOnly())
-    {
-        QTextEdit::ExtraSelection selection;
-
-        // 设置高亮颜色为淡黄色
-        QColor lineColor = QColor(Qt::yellow).lighter(160);
-
-        selection.format.setBackground(lineColor);
-        selection.format.setProperty(QTextFormat::FullWidthSelection, true);
-        selection.cursor = textCursor();
-        selection.cursor.clearSelection();
-        extraSelections.append(selection);
-    }
-    setExtraSelections(extraSelections);
 }
 
 // 绘制行号区域

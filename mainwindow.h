@@ -20,8 +20,9 @@ public:
     MainWindow(QWidget *parent = nullptr); // 主窗口构造函数
     ~MainWindow();  // 析构函数
     void submitStyle(const QString &style); // 应用样式表更改
-    
+    bool favOpenFile(const QString &style); // 收藏夹打开文件
     int isSave(); // 是否保存
+
 
 
 
@@ -48,15 +49,13 @@ private slots:
     void on_TextEdit_redoAvailable(bool b);      // 重做可用状态变化
     void on_TextEdit_undoAvailable(bool b);      // 撤销可用状态变化
     void on_actionLineWrap_triggered();          // 自动换行开关
-    void on_actionShowStatusBar_triggered();     // 状态栏显示开关
-    void on_actionShowToolBar_triggered();       // 工具栏显示开关
     void on_actionExit_triggered();              // 退出程序
     void on_TextEdit_cursorPositionChanged();    // 光标位置改变
     void on_actionSelectAll_triggered();         // 全选
-    void on_openLastFiles_aboutToShow();
-    void on_theme_aboutToShow();
-    void on_actionFav_triggered();
-    void on_actionFont_triggered();
+    void on_openLastFiles_aboutToShow();        // 打开最近文件
+    void on_theme_aboutToShow();             // 主题设置
+    void on_actionFav_triggered();          // 收藏夹
+    void on_actionFont_triggered();        // 字体设置
 
     void closeEvent(QCloseEvent *e);             // 关闭事件处理器
 
@@ -67,10 +66,12 @@ private:
     QLabel autherLabel;           // 状态栏标签(显示作者信息)
     QString textEditFontColor;    // 字体颜色
     QString textEditBgColor;      // 背景颜色 
+    QString theme = "light";              // 主题
     bool ischanged;              // 文件是否被修改
 
     void saveToFile(const QString &filename); // 保存文件
     bool openFile(const QString &filePath); // 打开文件
+    void setHighlighter(const QString &language, const QString &theme); // 设置高亮规则
     
 
     FavDialog *favDialog;         // 收藏夹窗口

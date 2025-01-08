@@ -21,7 +21,7 @@ public:
     void hideLineNumberArea(bool flag);                // 显示/隐藏行号
     void detectHyperlink(); // 检测超链接
     void cleanAllFormat(); // 清除所有超链接
-    void setHightligter(const QString &language); // 读取高亮规则
+    void setHightligter(const QString &language, const QString &theme); // 读取高亮规则
 
 protected:
     void resizeEvent(QResizeEvent *event) override; // 重写大小调整事件
@@ -33,7 +33,6 @@ protected:
 
 private slots:
     void updateLineNumberAreaWidth(int newBlockCount);    // 更新行号区域宽度
-    void highlightCurrentLine();                          // 高亮当前行
     void updateLineNumberArea(const QRect &rect, int dy); // 更新行号区域
 
 private:

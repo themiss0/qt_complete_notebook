@@ -1,0 +1,166 @@
+{
+    "cpp": [
+        {
+            "name": "keyword",
+            "pattern": "\\bint\\b|\\bfloat\\b|\\bdouble\\b|\\bchar\\b|\\bvoid\\b|\\breturn\\b|\\bif\\b|\\belse\\b|\\bwhile\\b|\\bfor\\b|\\bclass\\b|\\bpublic\\b|\\bprivate\\b|\\bprotected\\b|\\bnew\\b|\\bdelete\\b|\\btry\\b|\\bcatch\\b|\\bthrow\\b|\\bnamespace\\b|\\busing\\b|\\btrue\\b|\\bfalse\\b",
+            "format": {
+                "foreground": "#569CD6",
+                "fontWeight": "bold"
+            }
+        },
+        {
+            "name": "singleLineComment",
+            "pattern": "//[^\\n]*",
+            "format": {
+                "foreground": "#6A9955"
+            }
+        },
+        {
+            "name": "multiLineComment",
+            "pattern": "/\\*.*?\\*/",
+            "format": {
+                "foreground": "#6A9955"
+            }
+        },
+        {
+            "name": "string",
+            "pattern": "\".*?\"",
+            "format": {
+                "foreground": "#CE9178"
+            }
+        },
+        {
+            "name": "function",
+            "pattern": "\\b[A-Za-z0-9_]+(?=\\()",
+            "format": {
+                "foreground": "#DCDCAA"
+            }
+        },
+        {
+            "name": "preprocessor",
+            "pattern": "#.*",
+            "format": {
+                "foreground": "#9B9B9B"
+            }
+        },
+        {
+            "name": "number",
+            "pattern": "\\b\\d+(\\.\\d+)?\\b",
+            "format": {
+                "foreground": "#B5CEA8"
+            }
+        }
+    ],
+    "java": [
+        {
+            "name": "keyword",
+            "pattern": "\\babstract\\b|\\bassert\\b|\\bboolean\\b|\\bbreak\\b|\\bbyte\\b|\\bcase\\b|\\bcatch\\b|\\bchar\\b|\\bclass\\b|\\bconst\\b|\\bcontinue\\b|\\bdefault\\b|\\bdo\\b|\\bdouble\\b|\\belse\\b|\\benum\\b|\\bextends\\b|\\bfinal\\b|\\bfinally\\b|\\bfloat\\b|\\bfor\\b|\\bgoto\\b|\\bif\\b|\\bimplements\\b|\\bimport\\b|\\binstanceof\\b|\\bint\\b|\\binterface\\b|\\blong\\b|\\bnative\\b|\\bnew\\b|\\bpackage\\b|\\bprivate\\b|\\bprotected\\b|\\bpublic\\b|\\breturn\\b|\\bshort\\b|\\bstatic\\b|\\bstrictfp\\b|\\bsuper\\b|\\bswitch\\b|\\bsynchronized\\b|\\bthis\\b|\\bthrow\\b|\\bthrows\\b|\\btransient\\b|\\btry\\b|\\bvoid\\b|\\bvolatile\\b|\\bwhile\\b",
+            "format": {
+                "foreground": "#569CD6",
+                "fontWeight": "bold"
+            }
+        },
+        {
+            "name": "singleLineComment",
+            "pattern": "//[^\\n]*",
+            "format": {
+                "foreground": "#6A9955"
+            }
+        },
+        {
+            "name": "multiLineComment",
+            "pattern": "/\\*.*?\\*/",
+            "format": {
+                "foreground": "#6A9955"
+            }
+        },
+        {
+            "name": "string",
+            "pattern": "\".*?\"",
+            "format": {
+                "foreground": "#CE9178"
+            }
+        },
+        {
+            "name": "function",
+            "pattern": "\\b[A-Za-z0-9_]+(?=\\()",
+            "format": {
+                "foreground": "#DCDCAA"
+            }
+        },
+        {
+            "name": "annotation",
+            "pattern": "@[A-Za-z0-9_]+",
+            "format": {
+                "foreground": "#9B9B9B"
+            }
+        },
+        {
+            "name": "number",
+            "pattern": "\\b\\d+(\\.\\d+)?\\b",
+            "format": {
+                "foreground": "#B5CEA8"
+            }
+        }
+    ],
+    "py": [
+        {
+            "name": "keyword",
+            "pattern": "\\bFalse\\b|\\bNone\\b|\\bTrue\\b|\\band\\b|\\bas\\b|\\bassert\\b|\\bbreak\\b|\\bclass\\b|\\bcontinue\\b|\\bdef\\b|\\bdel\\b|\\belif\\b|\\belse\\b|\\bexcept\\b|\\bfinally\\b|\\bfor\\b|\\bfrom\\b|\\bglobal\\b|\\bif\\b|\\bimport\\b|\\bin\\b|\\bis\\b|\\blambda\\b|\\bnonlocal\\b|\\bnot\\b|\\bor\\b|\\bpass\\b|\\braise\\b|\\breturn\\b|\\btry\\b|\\bwhile\\b|\\bwith\\b|\\byield\\b",
+            "format": {
+                "foreground": "#569CD6",
+                "fontWeight": "bold"
+            }
+        },
+        {
+            "name": "singleLineComment",
+            "pattern": "#[^\\n]*",
+            "format": {
+                "foreground": "#6A9955"
+            }
+        },
+        {
+            "name": "multiLineComment",
+            "pattern": "\"\"\".*?\"\"\"|'''.*?'''",
+            "format": {
+                "foreground": "#6A9955"
+            }
+        },
+        {
+            "name": "string",
+            "pattern": "\".*?\"|'.*?'",
+            "format": {
+                "foreground": "#CE9178"
+            }
+        },
+        {
+            "name": "function",
+            "pattern": "\\bdef\\s+([A-Za-z0-9_]+)\\b",
+            "format": {
+                "foreground": "#DCDCAA"
+            }
+        },
+        {
+            "name": "class",
+            "pattern": "\\bclass\\s+([A-Za-z0-9_]+)\\b",
+            "format": {
+                "foreground": "#4EC9B0",
+                "fontWeight": "bold"
+            }
+        },
+        {
+            "name": "decorator",
+            "pattern": "@[A-Za-z0-9_]+",
+            "format": {
+                "foreground": "#9B9B9B"
+            }
+        },
+        {
+            "name": "number",
+            "pattern": "\\b\\d+(\\.\\d+)?\\b",
+            "format": {
+                "foreground": "#B5CEA8"
+            }
+        }
+    ]
+}

@@ -12,6 +12,7 @@
 #include <iostream>
 #include <QPlainTextEdit>
 #include <QFontDialog>
+#include <QFileInfo>
 
 // 主窗口构造函数:初始化UI和各项设置
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -104,7 +105,7 @@ bool MainWindow::openFile(const QString &pathName)
     case QMessageBox::Cancel:
         return true;
     }
-    
+
     QFile file(pathName);
 
     if (!file.open(QFile::ReadOnly | QFile::Text))
@@ -314,25 +315,11 @@ void MainWindow::on_TextEdit_undoAvailable(bool b)
     ui->actionUndo->setEnabled(b);
 }
 // 应用样式表更改
-void MainWindow::sumbitStyleSheet()
+void MainWindow::submitStyle(const QString &style)
 {
-    ui->TextEdit->setStyleSheet(textEditFontColor + "; " + textEditBgColor);
+    setStyleSheet(style);
 }
-// 字体颜色设置
-void MainWindow::on_actionFontColor_triggered()
-{
-    QColor color = QColorDialog::getColor(Qt::black, this, "选择颜色");
-    textEditFontColor = "color:" + color.name();
-    sumbitStyleSheet();
-}
-// 背景颜色设置
-void MainWindow::on_actionBgColor_triggered()
-{
 
-    QColor color = QColorDialog::getColor(Qt::black, this, "选择颜色");
-    textEditBgColor = "background-color:" + color.name();
-    sumbitStyleSheet();
-}
 // 自动换行设置
 void MainWindow::on_actionLineWrap_triggered()
 {
@@ -405,11 +392,6 @@ void MainWindow::closeEvent(QCloseEvent *e)
 // 光标位置改变时
 void MainWindow::on_TextEdit_cursorPositionChanged()
 {
-    statusCursorLabel.setText("Ln: " + QString::number(ui->TextEdit->textCursor().blockNumber()) + "   Col: " + QString::number(ui->TextEdit->textCursor().columnNumber()));
-}
-// 显示行号功能
-void MainWindow::on_actionShowRowNum_triggered()
-{
     if (ui->actionShowRowNum->isChecked())
     {
         ui->TextEdit->hideLineNumberArea(false);
@@ -464,6 +446,44 @@ void MainWindow::on_openLastFiles_aboutToShow()
     connect(deleteAll, &QAction::triggered, &IDataBase::getInstance(), &IDataBase::deleteAllLastOpenFilePaths);
     deleteAll->setCheckable(false);
     ui->openLastFiles->addAction(deleteAll);
+}
+// 主题功能
+void MainWindow::on_theme_aboutToShow()
+{
+    QString themeDirPath = "../../theme";
+    // 清空主题菜单
+    for (auto i : ui->theme->actions())
+    {
+        i->deleteLater();
+    }
+    ui->theme->clear();
+    // 检测主题文件夹内容
+    QDir themeDir(themeDirPath);
+    if (!themeDir.exists())
+    {
+        return;
+    }
+    QStringList filters;
+    filters << "*.qss";
+    QStringList themes = themeDir.entryList(filters, QDir::Files);
+
+    // 重新添加主题
+    QAction *ac;
+    for (int i = 0; i < themes.size(); i++)
+    {
+        QFile styleFile(themeDirPath + "/" + themes[i]);
+        QString style = "";
+        if (styleFile.open(QFile::ReadOnly))
+        {
+            style = styleFile.readAll();
+            styleFile.close();
+        }
+        ac = new QAction(ui->theme);
+        ac->setText(QFileInfo(themes[i]).baseName());
+        connect(ac, &QAction::triggered, this, [style, this]()
+                { setStyleSheet(style); });
+        ui->theme->addAction(ac);
+    }
 }
 // 打开收藏夹
 void MainWindow::on_actionFav_triggered()

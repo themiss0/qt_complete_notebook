@@ -19,7 +19,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr); // 主窗口构造函数
     ~MainWindow();  // 析构函数
-    void sumbitStyleSheet(); // 应用样式表更改
+    void submitStyle(const QString &style); // 应用样式表更改
+    
     int isSave(); // 是否保存
 
 
@@ -46,18 +47,16 @@ private slots:
     void on_TextEdit_copyAvailable(bool b);      // 复制可用状态变化
     void on_TextEdit_redoAvailable(bool b);      // 重做可用状态变化
     void on_TextEdit_undoAvailable(bool b);      // 撤销可用状态变化
-    void on_actionFontColor_triggered();         // 设置字体颜色
-    void on_actionBgColor_triggered();           // 设置背景颜色
-    void on_actionLineWrap_triggered();          // 行包装开关
+    void on_actionLineWrap_triggered();          // 自动换行开关
     void on_actionShowStatusBar_triggered();     // 状态栏显示开关
     void on_actionShowToolBar_triggered();       // 工具栏显示开关
     void on_actionExit_triggered();              // 退出程序
     void on_TextEdit_cursorPositionChanged();    // 光标位置改变
-    void on_actionShowRowNum_triggered();        // 显示行号开关
     void on_actionSelectAll_triggered();         // 全选
-    void on_actionFont_triggered();              // 字体设置
     void on_openLastFiles_aboutToShow();
+    void on_theme_aboutToShow();
     void on_actionFav_triggered();
+    void on_actionFont_triggered();
 
     void closeEvent(QCloseEvent *e);             // 关闭事件处理器
 

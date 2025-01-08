@@ -50,6 +50,11 @@
       <string>打开最近的文件</string>
      </property>
     </widget>
+    <widget class="QMenu" name="theme">
+     <property name="title">
+      <string>主题</string>
+     </property>
+    </widget>
     <addaction name="actionNew"/>
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
@@ -60,6 +65,7 @@
     <addaction name="actionSaveAs"/>
     <addaction name="actionAutoSave"/>
     <addaction name="separator"/>
+    <addaction name="theme"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="edit">
@@ -83,9 +89,6 @@
     </property>
     <addaction name="actionLineWrap"/>
     <addaction name="actionFont"/>
-    <addaction name="actionFontColor"/>
-    <addaction name="actionBgColor"/>
-    <addaction name="actionShowRowNum"/>
    </widget>
    <widget class="QMenu" name="view">
     <property name="title">
@@ -395,6 +398,11 @@
    </property>
    <property name="text">
     <string>自动保存</string>
+   </property>
+  </action>
+  <action name="actionj">
+   <property name="text">
+    <string>j</string>
    </property>
   </action>
  </widget>

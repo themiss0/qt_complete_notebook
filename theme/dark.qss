@@ -1,0 +1,40 @@
+QWidget {
+    background-color: #1f1f1f;
+    color: #ffffff;
+}
+
+QPushButton {
+    background-color: #3d3d3d;
+    color: #ffffff;
+    border: 1px solid #555;
+    padding: 5px;
+}
+
+QLineEdit {
+    background-color: #3d3d3d;
+    color: #ffffff;
+    border: 1px solid #555;
+    padding: 5px;
+}
+
+QMenuBar {
+    background-color: #2d2d2d;
+    color: #ffffff;
+}
+
+QMenuBar::item {
+    background-color: transparent;
+}
+
+QMenuBar::item:selected {
+    background-color: #555;
+}
+
+QMenu {
+    background-color: #2d2d2d;
+    color: #ffffff;
+}
+
+QMenu::item:selected {
+    background-color: #555;
+}

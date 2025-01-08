@@ -23,6 +23,7 @@ void FavDialog::showEvent(QShowEvent *event)
     {
         ui->listWidget->addItem(filePaths[i]);
     }
+    connect(ui->listWidget, &QListWidget::itemDoubleClicked, this, &FavDialog::on_bt_open_clicked);
 }
 //  打开文件
 void FavDialog::on_bt_open_clicked()

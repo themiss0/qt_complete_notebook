@@ -181,6 +181,9 @@
    <property name="text">
     <string>另存为</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
@@ -312,6 +315,9 @@
    <property name="text">
     <string>自动换行</string>
    </property>
+   <property name="shortcut">
+    <string>Alt+Z</string>
+   </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
@@ -378,6 +384,9 @@
   <action name="actionFav">
    <property name="text">
     <string>收藏夹</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
   <action name="actionAutoSave">

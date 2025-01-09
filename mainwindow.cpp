@@ -119,6 +119,7 @@ bool MainWindow::openFile(const QString &pathName)
     setHighlighter(QFileInfo(pathName).suffix(), theme);
     // 更新文件路径
     filepath = pathName;
+    // 
     // 重置更改状态
     ischanged = false;
     return true;
@@ -153,8 +154,10 @@ int MainWindow::isSave()
 // 关于对话框的槽函数
 void MainWindow::on_actionAbout_triggered()
 {
-    AboutDialog aboutDialog;
-    aboutDialog.exec();
+    // AboutDialog aboutDialog;
+    // aboutDialog.exec();
+
+    ui->TextEdit->showLabelDialog();
 }
 // 查找对话框的槽函数
 void MainWindow::on_actionFind_triggered()
@@ -384,14 +387,6 @@ void MainWindow::closeEvent(QCloseEvent *e)
 // 光标位置改变时
 void MainWindow::on_TextEdit_cursorPositionChanged()
 {
-    if (ui->actionShowRowNum->isChecked())
-    {
-        ui->TextEdit->hideLineNumberArea(false);
-    }
-    else
-    {
-        ui->TextEdit->hideLineNumberArea(true);
-    }
 }
 // 全选功能
 void MainWindow::on_actionSelectAll_triggered()

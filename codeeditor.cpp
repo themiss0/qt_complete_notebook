@@ -7,20 +7,64 @@
 #include <QTextEdit>
 #include <QApplication>
 #include <QCursor>
+#include "qmenu.h"
+#include <QInputDialog>
 
 // 构造函数:初始化行号区域并连接信号槽
-CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
+CodeEditor::CodeEditor(QWidget *parent,  QString filepath) : QPlainTextEdit(parent)
 {
+    this->filepath = filepath;
     lineNumberArea = new LineNumberArea(this);
+    labelDialog = new LabelDialog(this, filepath);
+    labelDialog->hide();
 
     // 连接信号槽
     connect(this, &CodeEditor::blockCountChanged, this, &CodeEditor::updateLineNumberAreaWidth);
     connect(this, &CodeEditor::updateRequest, this, &CodeEditor::updateLineNumberArea);
+    connect(labelDialog, &LabelDialog::jumpToLineRequested, this, &CodeEditor::jumpToRow);
 
     setMouseTracking(true);
-
     updateLineNumberAreaWidth(0);
 }
+
+//
+void CodeEditor::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu *menu = createStandardContextMenu(); // 创建标准右键菜单
+
+    // 获取当前光标所在行
+    QTextCursor cursor = cursorForPosition(event->pos());
+    int currentLine = cursor.blockNumber() + 1;
+
+    // 检查当前行是否已有标签
+
+    // 添加 "Add Label" 或 "Delete Label" 菜单项
+    if (labelDialog->isRowBookmarked(currentLine))
+    {
+        QAction *deleteLabelAction = menu->addAction("删除书签");
+        connect(deleteLabelAction, &QAction::triggered, this, [this, currentLine]()
+                {
+                    this->labelDialog->removeBookmark(currentLine); // 删除当前行的标签
+                });
+    }
+    else
+    {
+        QAction *addLabelAction = menu->addAction("添加书签");
+        connect(addLabelAction, &QAction::triggered, this, [this, currentLine]()
+                {
+                    QString message = QInputDialog::getText(this, "添加书签", "输入书签注释："); // 获取用户输入的标签信息
+                    if (message.isEmpty())
+                    {
+                        return;
+                    }
+                    this->labelDialog->addBookmark(currentLine, message); // 添加当前行的标签
+                });
+    }
+
+    menu->exec(event->globalPos()); // 显示菜单
+    delete menu;                    // 释放菜单内存
+}
+
 
 // 计算行号区域宽度
 int CodeEditor::lineNumberAreaWidth()
@@ -35,7 +79,7 @@ int CodeEditor::lineNumberAreaWidth()
     }
 
     // 计算所需空间宽度
-    int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
+    int space = 8 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
 
     return space;
 }
@@ -59,6 +103,52 @@ void CodeEditor::updateLineNumberArea(const QRect &rect, int dy)
     // 如果视口矩形发生变化,更新行号区域宽度
     if (rect.contains(viewport()->rect()))
         updateLineNumberAreaWidth(0);
+}
+void CodeEditor::jumpToRow(int row)
+{
+    QTextBlock block = document()->findBlockByLineNumber(row - 1);
+    if (!block.isValid())
+    {
+        return; // 如果行号无效，直接返回
+    }
+
+    // 将光标移动到指定行
+    QTextCursor cursor(block);
+    setTextCursor(cursor);
+
+    setTextCursor(cursor);
+    ensureCursorVisible();
+}
+// 绘制行号区域
+void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
+{
+    // 初始化画笔
+    QPainter painter(lineNumberArea);
+    // painter.fillRect(event->rect(), Qt::lightGray);
+
+    // 获取第一个可见文本块
+    QTextBlock block = firstVisibleBlock();
+    int blockNumber = block.blockNumber();
+    int top = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
+    int bottom = top + qRound(blockBoundingRect(block).height());
+
+    // 绘制行号
+    while (block.isValid() && top <= event->rect().bottom())
+    {
+        if (block.isVisible() && bottom >= event->rect().top())
+        {
+            QString number = QString::number(blockNumber + 1);
+            painter.setPen(Qt::green);
+
+            painter.drawText(0, top, lineNumberArea->width(), fontMetrics().height(),
+                             Qt::AlignRight, number);
+        }
+
+        block = block.next();
+        top = bottom;
+        bottom = top + qRound(blockBoundingRect(block).height());
+        ++blockNumber;
+    }
 }
 
 // 处理窗口大小改变事件
@@ -175,7 +265,7 @@ void CodeEditor::detectHyperlink()
         QTextCharFormat format;
         format.setAnchor(true);
         format.setAnchorHref(url);
-        format.setForeground(Qt::blue);
+        format.setForeground(QColor("#ce9178"));
         format.setFontUnderline(true);
         cursor.setCharFormat(format);
     }
@@ -207,48 +297,12 @@ void CodeEditor::setHightligter(const QString &language, const QString &theme)
     highlighter->setHighlightingRules(rules);
 }
 
-// 绘制行号区域
-void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
+void CodeEditor::showLabelDialog()
 {
-    // 初始化画笔
-    QPainter painter(lineNumberArea);
-    painter.fillRect(event->rect(), Qt::lightGray);
-
-    // 获取第一个可见文本块
-    QTextBlock block = firstVisibleBlock();
-    int blockNumber = block.blockNumber();
-    int top = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
-    int bottom = top + qRound(blockBoundingRect(block).height());
-
-    // 绘制行号
-    while (block.isValid() && top <= event->rect().bottom())
-    {
-        if (block.isVisible() && bottom >= event->rect().top())
-        {
-            QString number = QString::number(blockNumber + 1);
-            painter.setPen(Qt::black);
-            painter.drawText(0, top, lineNumberArea->width(), fontMetrics().height(),
-                             Qt::AlignRight, number);
-        }
-
-        block = block.next();
-        top = bottom;
-        bottom = top + qRound(blockBoundingRect(block).height());
-        ++blockNumber;
-    }
+    labelDialog->show();
 }
 
-// 控制行号区域显示/隐藏
-void CodeEditor::hideLineNumberArea(bool flag)
+void CodeEditor::hideLabelDialog()
 {
-    if (flag)
-    {
-        lineNumberArea->hide();
-        setViewportMargins(0, 0, 0, 0);
-    }
-    else
-    {
-        lineNumberArea->show();
-        setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
-    }
+    labelDialog->hide();
 }

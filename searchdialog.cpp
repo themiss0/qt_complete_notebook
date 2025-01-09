@@ -2,7 +2,6 @@
 #include "ui_searchdialog.h"
 #include <QPlainTextEdit>
 #include <QMessageBox>
-#include <iostream>
 
 SearchDialog::SearchDialog(QWidget *parent, QPlainTextEdit *textEdit)
     : QDialog(parent), ui(new Ui::SearchDialog)

@@ -20,8 +20,16 @@ public:
     QStringList getLastOpenFilePaths();
     bool addLastOpenFilePath(const QString &filePath);
     bool deleteAllLastOpenFilePaths();
+    // 添加书签
+    bool addLabel(const QString &filePath, int row, const QString &message);
+    // 删除书签
+    bool deleteLabel(int id);
+    // 根据文件路径获取书签列表
+    QList<QMap<QString, QVariant>> getLabelsByFilePath(const QString &filePath);
+    // 删除所有行
+    bool deleteAllLabels(const QString &filename);
 
-    // 
+    //
     bool addFavoriteFilePath(const QString &filePath);
     bool deleteFavoriteFilePath(const QString &filePath);
     QStringList getFavoriteFilePaths();

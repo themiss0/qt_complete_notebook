@@ -77,6 +77,71 @@ bool IDataBase::deleteAllLastOpenFilePaths()
     return true;
 }
 
+//
+bool IDataBase::addLabel(const QString &filePath, int row, const QString &message)
+{
+    QSqlQuery query;
+    query.prepare("INSERT INTO label (filepath, row, message) VALUES (:filepath, :row, :message)");
+    query.bindValue(":filepath", filePath);
+    query.bindValue(":row", row);
+    query.bindValue(":message", message);
+
+    if (!query.exec())
+    {
+        qDebug() << "Failed to add label:" << query.lastError().text();
+        return false;
+    }
+    return true;
+}
+
+QList<QMap<QString, QVariant>> IDataBase::getLabelsByFilePath(const QString &filePath)
+{
+    QList<QMap<QString, QVariant>> labels;
+    QSqlQuery query;
+    query.prepare("SELECT id, row, message FROM label WHERE filepath = :filepath");
+    query.bindValue(":filepath", filePath);
+
+    if (!query.exec())
+    {
+        qDebug() << "Failed to get labels:" << query.lastError().text();
+        return labels;
+    }
+
+    while (query.next())
+    {
+        QMap<QString, QVariant> label;
+        label["row"] = query.value("row");
+        label["message"] = query.value("message");
+        labels.append(label);
+    }
+
+    return labels;
+}
+
+bool IDataBase::deleteAllLabels(const QString &filename)
+{
+    if (filename.isEmpty())
+    {
+        qDebug() << "Table name is empty!";
+        return false;
+    }
+
+    QSqlDatabase::database().transaction(); // 开启事务
+
+    QSqlQuery query;
+    QString sql = QString("delete from label where filepath = '%1'").arg(filename);
+    if (!query.exec(sql))
+    {
+        qDebug() << "Failed to delete all rows from table" << filename << ":" << query.lastError().text();
+        QSqlDatabase::database().rollback(); // 回滚事务
+        return false;
+    }
+
+    QSqlDatabase::database().commit(); // 提交事务
+    qDebug() << "All rows deleted from table" << filename;
+    return true;
+}
+
 // 添加收藏文件路径
 bool IDataBase::addFavoriteFilePath(const QString &filePath)
 {

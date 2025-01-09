@@ -14,6 +14,7 @@ SOURCES += \
     codehighlighter.cpp \
     favdialog.cpp \
     highlightrulereader.cpp \
+    labeldialog.cpp \
     main.cpp \
     mainwindow.cpp \
     replacedialog.cpp \
@@ -21,12 +22,14 @@ SOURCES += \
     idatabase.cpp
 
 HEADERS += \
+    BookMark.h \
     aboutdialog.h \
     codeeditor.h \
     codehighlighter.h \
     favdialog.h \
     highlightingrule.h \
     highlightrulereader.h \
+    labeldialog.h \
     mainwindow.h \
     replacedialog.h \
     searchdialog.h  \
@@ -35,6 +38,7 @@ HEADERS += \
 FORMS += \
     aboutdialog.ui \
     favdialog.ui \
+    labeldialog.ui \
     mainwindow.ui \
     replacedialog.ui \
     searchdialog.ui

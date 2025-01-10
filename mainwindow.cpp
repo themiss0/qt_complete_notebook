@@ -133,6 +133,7 @@ void MainWindow::setHighlighter(const QString &language, const QString &theme)
     ui->TextEdit->setHightligter(language, theme);
     connect(ui->TextEdit, &QPlainTextEdit::textChanged, this, &MainWindow::on_TextEdit_textChanged);
 }
+
 // 是否保存
 int MainWindow::isSave()
 {

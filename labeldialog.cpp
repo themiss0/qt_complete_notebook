@@ -17,9 +17,10 @@ LabelDialog::LabelDialog(QWidget *parent) : QDialog(parent), ui(new Ui::LabelDia
     connect(ui->listWidget, &QListWidget::itemClicked, this, &LabelDialog::onItemClicked);
     connect(ui->listWidget, &QListWidget::customContextMenuRequested, this, &LabelDialog::onCustomContextMenuRequested);
 }
-
+// 根据文件路径读取书签
 void LabelDialog::loadBookmarksFromDatabase(const QString &filepath)
 {
+    this->filepath = filepath;
     ui->listWidget->clear();
     QList<QMap<QString, QVariant>> labels = IDataBase::getInstance().getLabelsByFilePath(filepath);
     for (const auto &label : labels)
@@ -27,13 +28,13 @@ void LabelDialog::loadBookmarksFromDatabase(const QString &filepath)
         int row = label["row"].toInt();
         QString message = label["message"].toString();
 
-        addBookmark(row, message); // 添加书签
+        addBookmark(row, message, false); // 添加书签
         bookmarkRows.insert(row);  // 添加行号
     }
 }
 
 // 向列表控件添加新书签，包含行号和消息
-void LabelDialog::addBookmark(int row, const QString &message)
+void LabelDialog::addBookmark(int row, const QString &message, bool saveFile)
 {
     isChange = true;
     QString itemText = QString("行 %1: %2").arg(row).arg(message);
@@ -42,7 +43,9 @@ void LabelDialog::addBookmark(int row, const QString &message)
     item->setData(Qt::UserRole - 1, row);
     item->setData(Qt::UserRole - 2, message);
     bookmarkRows.insert(row);
-
+    if(saveFile){
+        save(filepath);
+    }
 }
 
 // 通过行号从列表控件中删除书签
@@ -60,6 +63,7 @@ void LabelDialog::removeBookmark(int row)
         }
     }
     bookmarkRows.remove(row);
+    save(filepath);
 }
 
 void LabelDialog::save(const QString &filepath)

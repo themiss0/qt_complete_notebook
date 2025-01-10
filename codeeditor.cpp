@@ -23,11 +23,13 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     connect(this, &CodeEditor::updateRequest, this, &CodeEditor::updateLineNumberArea);
     connect(labelDialog, &LabelDialog::jumpToLineRequested, this, &CodeEditor::jumpToRow);
 
+    // 添加鼠标跟踪
     setMouseTracking(true);
+    // 更新行号
     updateLineNumberAreaWidth(0);
 }
 
-//
+// 右键菜单添加书签
 void CodeEditor::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu *menu = createStandardContextMenu(); // 创建标准右键菜单
@@ -137,7 +139,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
         if (block.isVisible() && bottom >= event->rect().top())
         {
             QString number = QString::number(blockNumber + 1);
-            painter.setPen(Qt::green);
+            painter.setPen(Qt::darkYellow);
 
             painter.drawText(0, top, lineNumberArea->width(), fontMetrics().height(),
                              Qt::AlignRight, number);

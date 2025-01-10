@@ -18,9 +18,8 @@ class LabelDialog : public QDialog
 public:
     LabelDialog(QWidget *parent);
 
-    void addBookmark(int row, const QString &message); // 添加书签
+    void addBookmark(int row, const QString &message, bool saveLabel = true); // 添加书签
     void removeBookmark(int row);                      // 删除书签
-    void clearBookmarks();                             // 清空书签
     QSet<int> getBookmarkRows();                       // 获取所有书签行号
     void save(const QString &filepath);
     bool isRowBookmarked(int row); // 判断行是否有书签
@@ -38,7 +37,7 @@ private:
     QVector<Bookmark> labelList;
     bool isChange;
     QSet<int> bookmarkRows;
-
+    QString filepath;
 };
 
 #endif // LABELDIALOG_H

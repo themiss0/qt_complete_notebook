@@ -97,7 +97,7 @@
    </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>窗口</string>
+     <string>窗口(&amp;W)</string>
     </property>
     <addaction name="actionFav"/>
     <addaction name="actionLabel"/>

@@ -11,11 +11,11 @@
 #include <QInputDialog>
 
 // 构造函数:初始化行号区域并连接信号槽
-CodeEditor::CodeEditor(QWidget *parent,  QString filepath) : QPlainTextEdit(parent)
+CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
     this->filepath = filepath;
     lineNumberArea = new LineNumberArea(this);
-    labelDialog = new LabelDialog(this, filepath);
+    labelDialog = new LabelDialog(this);
     labelDialog->hide();
 
     // 连接信号槽
@@ -64,7 +64,6 @@ void CodeEditor::contextMenuEvent(QContextMenuEvent *event)
     menu->exec(event->globalPos()); // 显示菜单
     delete menu;                    // 释放菜单内存
 }
-
 
 // 计算行号区域宽度
 int CodeEditor::lineNumberAreaWidth()

@@ -5,13 +5,11 @@
 #include "idatabase.h"
 
 // 构造函数：初始化标签对话框，设置UI元素和连接
-LabelDialog::LabelDialog(QWidget *parent, QString filepath) : QDialog(parent), ui(new Ui::LabelDialog)
+LabelDialog::LabelDialog(QWidget *parent) : QDialog(parent), ui(new Ui::LabelDialog)
 {
     ui->setupUi(this);
     setWindowTitle("书签");
     setMinimumSize(300, 400);
-
-    this->filepath = filepath;
     isChange = false;
 
     ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -20,8 +18,9 @@ LabelDialog::LabelDialog(QWidget *parent, QString filepath) : QDialog(parent), u
     connect(ui->listWidget, &QListWidget::customContextMenuRequested, this, &LabelDialog::onCustomContextMenuRequested);
 }
 
-void LabelDialog::loadBookmarksFromDatabase()
+void LabelDialog::loadBookmarksFromDatabase(const QString &filepath)
 {
+    ui->listWidget->clear();
     QList<QMap<QString, QVariant>> labels = IDataBase::getInstance().getLabelsByFilePath(filepath);
     for (const auto &label : labels)
     {
@@ -29,7 +28,7 @@ void LabelDialog::loadBookmarksFromDatabase()
         QString message = label["message"].toString();
 
         addBookmark(row, message); // 添加书签
-        bookmarkRows.insert(row);      // 添加行号
+        bookmarkRows.insert(row);  // 添加行号
     }
 }
 
@@ -43,6 +42,7 @@ void LabelDialog::addBookmark(int row, const QString &message)
     item->setData(Qt::UserRole - 1, row);
     item->setData(Qt::UserRole - 2, message);
     bookmarkRows.insert(row);
+
 }
 
 // 通过行号从列表控件中删除书签
@@ -62,14 +62,14 @@ void LabelDialog::removeBookmark(int row)
     bookmarkRows.remove(row);
 }
 
-void LabelDialog::save()
+void LabelDialog::save(const QString &filepath)
 {
     if (!isChange)
     {
         return;
     }
     IDataBase::getInstance().deleteAllLabels(filepath);
-    for (int i = 0 ; i < ui->listWidget->count(); i++)
+    for (int i = 0; i < ui->listWidget->count(); i++)
     {
         IDataBase::getInstance().addLabel(filepath, ui->listWidget->item(i)->data(Qt::UserRole - 1).toInt(), ui->listWidget->item(i)->data(Qt::UserRole - 2).toString());
     }

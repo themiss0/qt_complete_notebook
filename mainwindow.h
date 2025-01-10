@@ -59,6 +59,8 @@ private slots:
 
     void closeEvent(QCloseEvent *e);             // 关闭事件处理器
 
+    void on_actionLabel_triggered();
+
 private:
     Ui::MainWindow *ui;           // UI界面对象
     QLabel statusLabel;           // 状态栏标签(显示文本信息)

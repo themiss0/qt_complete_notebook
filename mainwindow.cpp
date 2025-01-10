@@ -88,6 +88,7 @@ void MainWindow::saveToFile(const QString &filename)
     filepath = filename;
     ischanged = false;
     this->setWindowTitle(filepath);
+    ui->TextEdit->labelDialog->save(filepath);
 }
 // 打开文件
 bool MainWindow::openFile(const QString &pathName)
@@ -119,7 +120,8 @@ bool MainWindow::openFile(const QString &pathName)
     setHighlighter(QFileInfo(pathName).suffix(), theme);
     // 更新文件路径
     filepath = pathName;
-    // 
+    //读取书签
+    ui->TextEdit->labelDialog->loadBookmarksFromDatabase(filepath);
     // 重置更改状态
     ischanged = false;
     return true;
@@ -154,10 +156,9 @@ int MainWindow::isSave()
 // 关于对话框的槽函数
 void MainWindow::on_actionAbout_triggered()
 {
-    // AboutDialog aboutDialog;
-    // aboutDialog.exec();
+    AboutDialog aboutDialog;
+    aboutDialog.exec();
 
-    ui->TextEdit->showLabelDialog();
 }
 // 查找对话框的槽函数
 void MainWindow::on_actionFind_triggered()
@@ -482,3 +483,9 @@ void MainWindow::on_actionFav_triggered()
 {
     favDialog->show();
 }
+
+void MainWindow::on_actionLabel_triggered()
+{
+    ui->TextEdit->showLabelDialog();
+}
+

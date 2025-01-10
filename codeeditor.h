@@ -14,14 +14,10 @@ class CodeEditor : public QPlainTextEdit
     Q_OBJECT
 
 public:
-    CodeEditor(QWidget *parent = nullptr,  QString filepath = ""); // 构造函数
-
-    void addBookmark(int row, const QString &message);        // 添加书签
-    void deleteBookmark(int id);                              // 删除书签
+    CodeEditor(QWidget *parent = nullptr); // 构造函数
     void contextMenuEvent(QContextMenuEvent *event) override; // 右键菜单事件
 
-    void addLabelAtLine(int line);
-    void deleteLabelAtLine(int line);
+    LabelDialog *labelDialog = nullptr;
 
     // 行号区域相关函数
     void lineNumberAreaPaintEvent(QPaintEvent *event);                  // 绘制行号
@@ -40,16 +36,16 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;                 // 键盘按下事件
     void keyReleaseEvent(QKeyEvent *event) override;               // 键盘释放事件
 
+private:
+    QWidget *lineNumberArea; // 行号显示区域
+    CodeHighlighter *highlighter = nullptr;
+    QString filepath;
+
 private slots:
     void updateLineNumberAreaWidth(int newBlockCount);    // 更新行号区域宽度
     void updateLineNumberArea(const QRect &rect, int dy); // 更新行号区域
     void jumpToRow(int row);
 
-private:
-    QWidget *lineNumberArea; // 行号显示区域
-    CodeHighlighter *highlighter = nullptr;
-    LabelDialog *labelDialog = nullptr;
-    QString filepath;
 };
 
 // 行号区域类

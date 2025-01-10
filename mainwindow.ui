@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>833</width>
+    <height>566</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,7 +37,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>833</width>
      <height>21</height>
     </rect>
    </property>
@@ -87,7 +87,6 @@
     </widget>
     <addaction name="actionLineWrap"/>
     <addaction name="actionFont"/>
-    <addaction name="actionFav"/>
     <addaction name="theme"/>
    </widget>
    <widget class="QMenu" name="help">
@@ -96,9 +95,17 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>窗口</string>
+    </property>
+    <addaction name="actionFav"/>
+    <addaction name="actionLabel"/>
+   </widget>
    <addaction name="file"/>
    <addaction name="edit"/>
    <addaction name="view"/>
+   <addaction name="menu"/>
    <addaction name="help"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -331,14 +338,12 @@
     <string>自动保存</string>
    </property>
   </action>
-  <action name="actionj">
+  <action name="actionLabel">
    <property name="text">
-    <string>j</string>
+    <string>书签</string>
    </property>
-  </action>
-  <action name="actiona">
-   <property name="text">
-    <string>a</string>
+   <property name="shortcut">
+    <string>Alt+D</string>
    </property>
   </action>
  </widget>

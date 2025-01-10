@@ -28,7 +28,9 @@ public:
 
 private slots:
     // 菜单栏动作槽函数
-    void on_actionAbout_triggered();  // "关于"对话框
+    void on_actionAbout_triggered();
+    void on_actionLabel_triggered();
+    // "关于"对话框
     void on_actionFind_triggered();   // 查找对话框
     void on_actionReplace_triggered(); // 替换对话框
     void on_actionOpen_triggered();   // 打开文件
@@ -49,6 +51,7 @@ private slots:
     void on_TextEdit_redoAvailable(bool b);      // 重做可用状态变化
     void on_TextEdit_undoAvailable(bool b);      // 撤销可用状态变化
     void on_actionLineWrap_triggered();          // 自动换行开关
+    void on_CodeEditor_close();
     void on_actionExit_triggered();              // 退出程序
     void on_TextEdit_cursorPositionChanged();    // 光标位置改变
     void on_actionSelectAll_triggered();         // 全选
@@ -67,7 +70,6 @@ private:
     QString textEditFontColor;    // 字体颜色
     QString textEditBgColor;      // 背景颜色 
     QString theme = "light";              // 主题
-    bool ischanged;              // 文件是否被修改
 
     void saveToFile(const QString &filename); // 保存文件
     bool openFile(const QString &filePath); // 打开文件
@@ -75,6 +77,5 @@ private:
     
 
     FavDialog *favDialog;         // 收藏夹窗口
-    QString filepath;             // 当前文件路径
 };
 #endif // MAINWINDOW_H

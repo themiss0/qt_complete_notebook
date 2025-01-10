@@ -28,7 +28,11 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="CodeEditor" name="TextEdit"/>
+     <widget class="FileTabWidget" name="tabWidget">
+      <property name="tabsClosable">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -86,8 +90,6 @@
      </property>
     </widget>
     <addaction name="actionLineWrap"/>
-    <addaction name="actionFont"/>
-    <addaction name="actionFav"/>
     <addaction name="theme"/>
    </widget>
    <widget class="QMenu" name="help">
@@ -96,9 +98,17 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>窗口</string>
+    </property>
+    <addaction name="actionFav"/>
+    <addaction name="action"/>
+   </widget>
    <addaction name="file"/>
    <addaction name="edit"/>
    <addaction name="view"/>
+   <addaction name="menu"/>
    <addaction name="help"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -341,12 +351,18 @@
     <string>a</string>
    </property>
   </action>
+  <action name="action">
+   <property name="text">
+    <string>书签</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CodeEditor</class>
-   <extends>QPlainTextEdit</extends>
-   <header location="global">codeeditor.h</header>
+   <class>FileTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header location="global">filetabwidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -2,6 +2,7 @@
 #define FAVDIALOG_H
 
 #include <QDialog>
+#include "filetabwidget.h"
 
 namespace Ui
 {
@@ -13,7 +14,7 @@ class FavDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit FavDialog(QWidget *parent = nullptr, const QString &path = nullptr);
+    explicit FavDialog(QWidget *parent = nullptr, FileTabWidget *tabwidget = nullptr);
     ~FavDialog();
 
 signals:
@@ -33,7 +34,7 @@ private slots:
 
 private:
     Ui::FavDialog *ui;
-    const QString &filepath;
+    const FileTabWidget *tabwidget;
 };
 
 #endif // FAVDIALOG_H

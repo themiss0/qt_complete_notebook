@@ -4,9 +4,10 @@
 #include <QDialogButtonBox>
 #include <QMessageBox>
 
-FavDialog::FavDialog(QWidget *parent, const QString &path)
-    : QDialog(parent), ui(new Ui::FavDialog), filepath(path)
+FavDialog::FavDialog(QWidget *parent, FileTabWidget *tabwidget)
+    : QDialog(parent), ui(new Ui::FavDialog)
 {
+    this->tabwidget = tabwidget;
     ui->setupUi(this);
 }
 
@@ -71,7 +72,7 @@ void FavDialog::on_bt_close_clicked()
 // 添加收藏
 void FavDialog::on_bt_add_clicked()
 {
-
+    auto filepath = tabwidget->getCurrentEditor()->filepath;
     if (filepath.isEmpty() || filepath == "")
     {
         return;

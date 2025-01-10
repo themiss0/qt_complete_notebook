@@ -9,19 +9,17 @@
 #include "CodeHighlighter.h"
 #include "labeldialog.h"
 
+
 class CodeEditor : public QPlainTextEdit
 {
     Q_OBJECT
 
 public:
+    bool isChanged = false;
+    QString filepath;
+
     CodeEditor(QWidget *parent = nullptr,  QString filepath = ""); // 构造函数
-
-    void addBookmark(int row, const QString &message);        // 添加书签
-    void deleteBookmark(int id);                              // 删除书签
     void contextMenuEvent(QContextMenuEvent *event) override; // 右键菜单事件
-
-    void addLabelAtLine(int line);
-    void deleteLabelAtLine(int line);
 
     // 行号区域相关函数
     void lineNumberAreaPaintEvent(QPaintEvent *event);                  // 绘制行号
@@ -31,6 +29,9 @@ public:
     void setHightligter(const QString &language, const QString &theme); // 读取高亮规则
     void showLabelDialog();                                             // 显示标签对话框
     void hideLabelDialog();                                             // 隐藏标签对话框
+
+signals:
+    void on_close();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;                // 重写大小调整事件
@@ -49,7 +50,6 @@ private:
     QWidget *lineNumberArea; // 行号显示区域
     CodeHighlighter *highlighter = nullptr;
     LabelDialog *labelDialog = nullptr;
-    QString filepath;
 };
 
 // 行号区域类
